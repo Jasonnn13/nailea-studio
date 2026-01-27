@@ -31,26 +31,9 @@ async function main() {
         aktif: true,
       },
     }),
-    prisma.user.create({
-      data: {
-        nama: "Siti Nurhaliza",
-        email: "siti@nailsalon.com",
-        password: "staff123",
-        role: "staff",
-        aktif: true,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        nama: "Dewi Lestari",
-        email: "dewi@nailsalon.com",
-        password: "staff123",
-        role: "staff",
-        aktif: true,
-      },
-    }),
+    
   ]);
-  console.log(`✅ ${users.length} users dibuat`);
+  console.log(`${users.length} users dibuat`);
 
   // Buat Customers
   const customers = await Promise.all([
@@ -95,7 +78,7 @@ async function main() {
       },
     }),
   ]);
-  console.log(`✅ ${customers.length} customers dibuat`);
+  console.log(`${customers.length} customers dibuat`);
 
   // Buat Items (Barang)
   const items = await Promise.all([
@@ -160,98 +143,221 @@ async function main() {
       },
     }),
   ]);
-  console.log(`✅ ${items.length} items dibuat`);
+  console.log(`${items.length} items dibuat`);
 
-  // Buat Jasa (Layanan)
+  // Buat Jasa (Layanan) - Nailea Studio Price List
   const jasaList = await Promise.all([
+    // Paket
     prisma.jasa.create({
       data: {
-        nama: "Manicure Basic",
-        deskripsi: "Perawatan kuku tangan dasar termasuk potong, bentuk, dan poles",
-        harga: 75000,
-        durasi: 30,
-        kategori: "Manicure",
-        aktif: true,
-      },
-    }),
-    prisma.jasa.create({
-      data: {
-        nama: "Manicure Gel",
-        deskripsi: "Manicure dengan kutek gel tahan lama",
-        harga: 150000,
-        durasi: 45,
-        kategori: "Manicure",
-        aktif: true,
-      },
-    }),
-    prisma.jasa.create({
-      data: {
-        nama: "Pedicure Basic",
-        deskripsi: "Perawatan kuku kaki dasar termasuk rendam, potong, dan poles",
+        nama: "Pedicure + Manicure",
+        deskripsi: "Paket lengkap perawatan kuku tangan dan kaki",
         harga: 100000,
-        durasi: 45,
-        kategori: "Pedicure",
-        aktif: true,
-      },
-    }),
-    prisma.jasa.create({
-      data: {
-        nama: "Pedicure Spa",
-        deskripsi: "Pedicure lengkap dengan scrub dan masker kaki",
-        harga: 175000,
         durasi: 60,
-        kategori: "Pedicure",
+        kategori: "Paket",
         aktif: true,
       },
     }),
     prisma.jasa.create({
       data: {
-        nama: "Nail Art Simple",
-        deskripsi: "Nail art sederhana 2-3 motif per kuku",
+        nama: "Manicure",
+        deskripsi: "Perawatan kuku tangan",
         harga: 50000,
         durasi: 30,
-        kategori: "Nail Art",
+        kategori: "Manicure",
         aktif: true,
       },
     }),
     prisma.jasa.create({
       data: {
-        nama: "Nail Art Premium",
-        deskripsi: "Nail art kompleks dengan berbagai teknik",
+        nama: "Pedicure",
+        deskripsi: "Perawatan kuku kaki",
+        harga: 60000,
+        durasi: 30,
+        kategori: "Pedicure",
+        aktif: true,
+      },
+    }),
+    prisma.jasa.create({
+      data: {
+        nama: "Gel Polish Single (Free Meni/Pedi)",
+        deskripsi: "Gel polish single color dengan gratis manicure atau pedicure",
         harga: 150000,
         durasi: 60,
+        kategori: "Gel Polish",
+        aktif: true,
+      },
+    }),
+    // Nail Art
+    prisma.jasa.create({
+      data: {
+        nama: "French Nail",
+        deskripsi: "Nail art french style per kuku",
+        harga: 5000,
+        durasi: 5,
         kategori: "Nail Art",
         aktif: true,
       },
     }),
     prisma.jasa.create({
       data: {
-        nama: "Nail Extension Acrylic",
-        deskripsi: "Perpanjangan kuku dengan acrylic",
-        harga: 300000,
-        durasi: 90,
+        nama: "Cat Eye",
+        deskripsi: "Nail art cat eye effect per kuku",
+        harga: 17000,
+        durasi: 10,
+        kategori: "Nail Art",
+        aktif: true,
+      },
+    }),
+    prisma.jasa.create({
+      data: {
+        nama: "Art Standart",
+        deskripsi: "Nail art standar per kuku",
+        harga: 10000,
+        durasi: 10,
+        kategori: "Nail Art",
+        aktif: true,
+      },
+    }),
+    prisma.jasa.create({
+      data: {
+        nama: "Art Character",
+        deskripsi: "Nail art karakter/gambar per kuku",
+        harga: 20000,
+        durasi: 15,
+        kategori: "Nail Art",
+        aktif: true,
+      },
+    }),
+    prisma.jasa.create({
+      data: {
+        nama: "Chrome",
+        deskripsi: "Nail art chrome effect per kuku",
+        harga: 5000,
+        durasi: 5,
+        kategori: "Nail Art",
+        aktif: true,
+      },
+    }),
+    prisma.jasa.create({
+      data: {
+        nama: "Full Chrome",
+        deskripsi: "Nail art full chrome per kuku",
+        harga: 10000,
+        durasi: 10,
+        kategori: "Nail Art",
+        aktif: true,
+      },
+    }),
+    prisma.jasa.create({
+      data: {
+        nama: "Accesories",
+        deskripsi: "Tambahan aksesoris pada kuku",
+        harga: 5000,
+        durasi: 5,
+        kategori: "Nail Art",
+        aktif: true,
+      },
+    }),
+    prisma.jasa.create({
+      data: {
+        nama: "Ombre",
+        deskripsi: "Nail art ombre/gradient per kuku",
+        harga: 10000,
+        durasi: 10,
+        kategori: "Nail Art",
+        aktif: true,
+      },
+    }),
+    prisma.jasa.create({
+      data: {
+        nama: "Marble",
+        deskripsi: "Nail art marble effect per kuku",
+        harga: 13000,
+        durasi: 10,
+        kategori: "Nail Art",
+        aktif: true,
+      },
+    }),
+    prisma.jasa.create({
+      data: {
+        nama: "Marble Javance",
+        deskripsi: "Nail art marble javance premium per kuku",
+        harga: 20000,
+        durasi: 15,
+        kategori: "Nail Art",
+        aktif: true,
+      },
+    }),
+    prisma.jasa.create({
+      data: {
+        nama: "3D",
+        deskripsi: "Nail art 3D per kuku",
+        harga: 10000,
+        durasi: 15,
+        kategori: "Nail Art",
+        aktif: true,
+      },
+    }),
+    prisma.jasa.create({
+      data: {
+        nama: "Art Standart Premium",
+        deskripsi: "Nail art standar premium per kuku",
+        harga: 15000,
+        durasi: 10,
+        kategori: "Nail Art",
+        aktif: true,
+      },
+    }),
+    prisma.jasa.create({
+      data: {
+        nama: "Art Character Premium",
+        deskripsi: "Nail art karakter premium per kuku",
+        harga: 20000,
+        durasi: 15,
+        kategori: "Nail Art",
+        aktif: true,
+      },
+    }),
+    // Extension & Remove
+    prisma.jasa.create({
+      data: {
+        nama: "Extension",
+        deskripsi: "Perpanjangan kuku per kuku",
+        harga: 15000,
+        durasi: 10,
         kategori: "Extension",
         aktif: true,
       },
     }),
     prisma.jasa.create({
       data: {
-        nama: "Nail Extension Gel",
-        deskripsi: "Perpanjangan kuku dengan gel",
-        harga: 350000,
-        durasi: 90,
-        kategori: "Extension",
+        nama: "Remove Extension",
+        deskripsi: "Pembongkaran extension per kuku",
+        harga: 3000,
+        durasi: 5,
+        kategori: "Remove",
+        aktif: true,
+      },
+    }),
+    prisma.jasa.create({
+      data: {
+        nama: "Remove Gel",
+        deskripsi: "Pembongkaran gel polish per kuku",
+        harga: 5000,
+        durasi: 5,
+        kategori: "Remove",
         aktif: true,
       },
     }),
   ]);
-  console.log(`✅ ${jasaList.length} jasa dibuat`);
+  console.log(`${jasaList.length} jasa dibuat`);
 
   // Buat Transaksi Item (Penjualan Barang)
   const transaksiItem1 = await prisma.transaksiItem.create({
     data: {
       customerId: customers[0].id,
-      userId: users[1].id,
+      userId: users[0].id,
       tanggal: new Date("2026-01-20"),
       total: 325000,
       status: "SELESAI",
@@ -269,7 +375,7 @@ async function main() {
   const transaksiItem2 = await prisma.transaksiItem.create({
     data: {
       customerId: customers[1].id,
-      userId: users[2].id,
+      userId: users[0].id,
       tanggal: new Date("2026-01-22"),
       total: 185000,
       status: "SELESAI",
@@ -286,7 +392,7 @@ async function main() {
   const transaksiItem3 = await prisma.transaksiItem.create({
     data: {
       customerId: customers[2].id,
-      userId: users[1].id,
+      userId: users[0].id,
       tanggal: new Date("2026-01-25"),
       total: 110000,
       status: "PENDING",
@@ -299,13 +405,13 @@ async function main() {
     },
   });
 
-  console.log("✅ 3 transaksi item dibuat");
+  console.log("3 transaksi item dibuat");
 
   // Buat Transaksi Jasa (Penjualan Layanan)
   const transaksiJasa1 = await prisma.transaksiJasa.create({
     data: {
       customerId: customers[0].id,
-      userId: users[1].id,
+      userId: users[0].id,
       tanggal: new Date("2026-01-20"),
       total: 225000,
       status: "SELESAI",
@@ -322,7 +428,7 @@ async function main() {
   const transaksiJasa2 = await prisma.transaksiJasa.create({
     data: {
       customerId: customers[1].id,
-      userId: users[2].id,
+      userId: users[0].id,
       tanggal: new Date("2026-01-21"),
       total: 275000,
       status: "SELESAI",
@@ -339,7 +445,7 @@ async function main() {
   const transaksiJasa3 = await prisma.transaksiJasa.create({
     data: {
       customerId: customers[3].id,
-      userId: users[1].id,
+      userId: users[0].id,
       tanggal: new Date("2026-01-24"),
       total: 500000,
       status: "SELESAI",
@@ -356,7 +462,7 @@ async function main() {
   const transaksiJasa4 = await prisma.transaksiJasa.create({
     data: {
       customerId: customers[4].id,
-      userId: users[2].id,
+      userId: users[0].id,
       tanggal: new Date("2026-01-27"),
       total: 75000,
       status: "PENDING",
@@ -369,14 +475,14 @@ async function main() {
     },
   });
 
-  console.log("✅ 4 transaksi jasa dibuat");
+  console.log("4 transaksi jasa dibuat");
 
-  console.log("🎉 Seeding selesai!");
+  console.log("Seeding selesai!");
 }
 
 main()
   .catch((e) => {
-    console.error("❌ Error seeding:", e);
+    console.error("Error seeding:", e);
     process.exit(1);
   })
   .finally(async () => {
