@@ -15,6 +15,7 @@ datasource db {
 
 model User {
   id        Int      @id @default(autoincrement())
+  uid       String   @unique @default(uuid())
   nama      String
   email     String   @unique
   password  String
@@ -29,6 +30,7 @@ model User {
 
 model Customer {
   id        Int      @id @default(autoincrement())
+  uid       String   @unique @default(uuid())
   nama      String
   email     String?  @unique
   telepon   String?
@@ -42,6 +44,7 @@ model Customer {
 
 model Item {
   id        Int      @id @default(autoincrement())
+  uid       String   @unique @default(uuid())
   nama      String
   stok      Int      @default(0)
   deskripsi String?  @db.Text
@@ -56,6 +59,7 @@ model Item {
 
 model Jasa {
   id        Int      @id @default(autoincrement())
+  uid       String   @unique @default(uuid())
   nama      String
   deskripsi String?  @db.Text
   harga     Decimal  @db.Decimal(10, 2)
@@ -70,6 +74,7 @@ model Jasa {
 
 model TransaksiItem {
   id         Int             @id @default(autoincrement())
+  uid        String          @unique @default(uuid())
   customerId Int
   userId     Int
   tanggal    DateTime        @default(now())
@@ -90,6 +95,7 @@ model TransaksiItem {
 
 model TransaksiJasa {
   id         Int             @id @default(autoincrement())
+  uid        String          @unique @default(uuid())
   customerId Int
   userId     Int
   tanggal    DateTime        @default(now())
