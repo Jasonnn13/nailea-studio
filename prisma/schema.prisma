@@ -1,0 +1,143 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  nama      String
+  email     String   @unique
+  password  String
+  role      String   @default("staff")
+  aktif     Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transaksiItem TransaksiItem[]
+  transaksiJasa TransaksiJasa[]
+}
+
+model Customer {
+  id        Int      @id @default(autoincrement())
+  nama      String
+  email     String?  @unique
+  telepon   String?
+  tanggalLahir  DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transaksiItem TransaksiItem[]
+  transaksiJasa TransaksiJasa[]
+}
+
+model Item {
+  id        Int      @id @default(autoincrement())
+  nama      String
+  stok      Int      @default(0)
+  deskripsi String?  @db.Text
+  harga     Decimal  @db.Decimal(10, 2)
+  kategori  String?
+  aktif     Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  detailTransaksiItem DetailTransaksiItem[]
+}
+
+model Jasa {
+  id        Int      @id @default(autoincrement())
+  nama      String
+  deskripsi String?  @db.Text
+  harga     Decimal  @db.Decimal(10, 2)
+  durasi    Int?     // durasi dalam menit
+  kategori  String?
+  aktif     Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  detailTransaksiJasa DetailTransaksiJasa[]
+}
+
+model TransaksiItem {
+  id         Int             @id @default(autoincrement())
+  customerId Int
+  userId     Int
+  tanggal    DateTime        @default(now())
+  total      Decimal         @db.Decimal(10, 2)
+  status     StatusTransaksi @default(PENDING)
+  catatan    String?         @db.Text
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+
+  customer Customer              @relation(fields: [customerId], references: [id])
+  user     User                  @relation(fields: [userId], references: [id])
+  detail   DetailTransaksiItem[]
+
+  @@index([customerId])
+  @@index([userId])
+  @@index([tanggal])
+}
+
+model TransaksiJasa {
+  id         Int             @id @default(autoincrement())
+  customerId Int
+  userId     Int
+  tanggal    DateTime        @default(now())
+  total      Decimal         @db.Decimal(10, 2)
+  status     StatusTransaksi @default(PENDING)
+  catatan    String?         @db.Text
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+
+  customer Customer              @relation(fields: [customerId], references: [id])
+  user     User                  @relation(fields: [userId], references: [id])
+  detail   DetailTransaksiJasa[]
+
+  @@index([customerId])
+  @@index([userId])
+  @@index([tanggal])
+}
+
+model DetailTransaksiItem {
+  id              Int     @id @default(autoincrement())
+  transaksiItemId Int
+  itemId          Int
+  jumlah          Int     @default(1)
+  harga           Decimal @db.Decimal(10, 2)
+
+  transaksiItem TransaksiItem @relation(fields: [transaksiItemId], references: [id])
+  item          Item          @relation(fields: [itemId], references: [id])
+
+  @@index([transaksiItemId])
+  @@index([itemId])
+}
+
+model DetailTransaksiJasa {
+  id              Int     @id @default(autoincrement())
+  transaksiJasaId Int
+  jasaId          Int
+  jumlah          Int     @default(1)
+  harga           Decimal @db.Decimal(10, 2)
+
+  transaksiJasa TransaksiJasa @relation(fields: [transaksiJasaId], references: [id])
+  jasa          Jasa          @relation(fields: [jasaId], references: [id])
+
+  @@index([transaksiJasaId])
+  @@index([jasaId])
+}
+
+enum StatusTransaksi {
+  PENDING
+  SELESAI
+  BATAL
+}
