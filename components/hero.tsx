@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
+import { handleSmoothScroll } from '@/lib/smooth-scroll'
 
 export function Hero() {
   return (
@@ -35,7 +36,8 @@ export function Hero() {
             </p>
 
             <div className="flex flex-wrap gap-4">
-              <Link href="#services">
+              <Link href="#services"
+              onClick={(e) => handleSmoothScroll(e, '#services')}>
                 <Button 
                   size="lg" 
                   className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-base rounded-md"
@@ -43,7 +45,7 @@ export function Hero() {
                   Get Started
                 </Button>
               </Link>
-              <Link href="/register">
+              <a href="https://wa.me/6282128228227" target="_blank" rel="noopener noreferrer">
                 <Button 
                   size="lg" 
                   variant="outline" 
@@ -51,7 +53,7 @@ export function Hero() {
                 >
                   Book Now
                 </Button>
-              </Link>
+              </a>
             </div>
           </div>
 

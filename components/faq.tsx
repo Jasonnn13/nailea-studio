@@ -13,55 +13,62 @@ export function FAQ() {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
 
   return (
-    <section id="faq" className="py-24 bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
-          {/* Left - FAQ */}
-          <div>
-            <p className="text-primary font-medium tracking-wide text-sm uppercase mb-4">FAQ</p>
-            <h2 className="font-heading text-3xl md:text-4xl text-foreground mb-10">
-              Frequently asked<br />
-              <span className="font-script text-primary text-4xl md:text-5xl">question</span>
-            </h2>
+    <section id="faq" className="py-24 bg-gradient-to-b from-background via-background to-accent/5 relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-primary/5 rounded-full"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] border border-accent/10 rounded-full"></div>
 
-            <div className="space-y-4">
-              {faqItems.map((item, index) => (
-                <div 
-                  key={index} 
-                  className="border-b border-border/50 pb-4"
-                >
-                  <button
-                    onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                    className="w-full flex items-center justify-between text-left py-2 group"
-                  >
-                    <span className="font-heading text-foreground group-hover:text-primary transition-colors">
-                      {item.q}
-                    </span>
-                    <span className={`text-primary transition-transform duration-300 ${openFaq === index ? 'rotate-180' : ''}`}>
-                      ▼
-                    </span>
-                  </button>
-                  {openFaq === index && (
-                    <p className="text-sm text-muted-foreground mt-2 pl-4 border-l-2 border-primary/30">
-                      {item.a}
-                    </p>
-                  )}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Centered header */}
+        <div className="text-center mb-16">
+          <p className="text-primary font-medium tracking-widest text-sm uppercase mb-4">Got Questions?</p>
+          <h2 className="font-heading text-4xl md:text-5xl text-foreground mb-4">
+            Frequently Asked
+          </h2>
+          <p className="font-script text-primary text-5xl md:text-6xl">Questions</p>
+          <div className="w-24 h-1 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mt-8"></div>
+        </div>
+
+        {/* FAQ Cards */}
+        <div className="space-y-4">
+          {faqItems.map((item, index) => (
+            <div 
+              key={index} 
+              className={`group bg-card/50 backdrop-blur-sm border border-accent/20 rounded-2xl overflow-hidden transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 ${openFaq === index ? 'ring-1 ring-primary/20' : ''}`}
+            >
+              <button
+                onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                className="w-full flex items-center justify-between text-left p-6"
+              >
+                <div className="flex items-center gap-4">
+                  <span className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary font-heading text-sm">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <span className="font-heading text-lg text-foreground group-hover:text-primary transition-colors">
+                    {item.q}
+                  </span>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Right - Image placeholder */}
-          <div className="relative hidden lg:block">
-            <div className="aspect-square bg-gradient-to-br from-secondary to-accent/30 rounded-2xl overflow-hidden">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-6xl">💅</span>
+                <span className={`flex items-center justify-center w-8 h-8 rounded-full bg-accent/20 text-primary text-sm transition-all duration-300 ${openFaq === index ? 'rotate-180 bg-primary/20' : ''}`}>
+                  ▼
+                </span>
+              </button>
+              <div className={`overflow-hidden transition-all duration-300 ${openFaq === index ? 'max-h-40' : 'max-h-0'}`}>
+                <p className="px-6 pb-6 pl-20 text-muted-foreground leading-relaxed">
+                  {item.a}
+                </p>
               </div>
             </div>
-            {/* Decorative elements */}
-            <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-primary/10 rounded-full -z-10"></div>
-            <div className="absolute -top-6 -right-6 w-24 h-24 border-2 border-primary/20 rounded-full -z-10"></div>
-          </div>
+          ))}
+        </div>
+
+        {/* Bottom CTA */}
+        <div className="text-center mt-12 pt-8">
+          <p className="text-muted-foreground text-sm">
+            Still have questions? 
+            <a href="#contact" className="text-primary hover:underline ml-2 font-medium">Contact us</a>
+          </p>
         </div>
       </div>
     </section>

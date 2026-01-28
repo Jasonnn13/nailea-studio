@@ -67,3 +67,13 @@ export function sanitizeUser(user: { id: number; uid: string; nama: string; emai
     aktif: user.aktif,
   }
 }
+
+// Verify auth from request headers (for API routes)
+export function verifyAuthFromRequest(request: Request): TokenPayload | null {
+  const authHeader = request.headers.get('Authorization')
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return null
+  }
+  const token = authHeader.slice(7)
+  return verifyToken(token)
+}

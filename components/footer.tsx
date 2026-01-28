@@ -63,8 +63,8 @@ export function Footer() {
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li>Jl. Taman Permata No.192</li>
               <li>Binong, Tangerang</li>
-              <li><a href="tel:0821282287" className="hover:text-primary transition-colors">0821282287</a></li>
-              <li><a href="https://instagram.com" className="hover:text-primary transition-colors">@NAILEASTUDIOTANGERANG</a></li>
+              <li><a href="https://wa.me/6282128228227" className="hover:text-primary transition-colors">082128228227</a></li>
+              <li><a href="https://www.instagram.com/naileastudiotangerang" className="hover:text-primary transition-colors">@NAILEASTUDIOTANGERANG</a></li>
             </ul>
           </div>
         </div>

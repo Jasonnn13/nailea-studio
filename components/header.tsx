@@ -2,48 +2,9 @@
 
 import Link from 'next/link'
 import { Button } from '../components/ui/button'
+import { handleSmoothScroll, handleHomeClick } from '@/lib/smooth-scroll'
 
 export function Header() {
-  const smoothScrollTo = (targetY: number) => {
-    const startY = window.scrollY
-    const distance = targetY - startY
-    const duration = 800 // ms - slower scroll
-    let startTime: number | null = null
-
-    const animation = (currentTime: number) => {
-      if (startTime === null) startTime = currentTime
-      const elapsed = currentTime - startTime
-      const progress = Math.min(elapsed / duration, 1)
-      
-      // Ease out cubic for gentle deceleration
-      const ease = 1 - Math.pow(1 - progress, 3)
-      
-      window.scrollTo(0, startY + distance * ease)
-      
-      if (progress < 1) {
-        requestAnimationFrame(animation)
-      }
-    }
-    
-    requestAnimationFrame(animation)
-  }
-
-  const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
-    e.preventDefault()
-    const element = document.getElementById(targetId.replace('#', ''))
-    if (element) {
-      const headerOffset = 80
-      const elementPosition = element.getBoundingClientRect().top
-      const offsetPosition = elementPosition + window.scrollY - headerOffset
-      smoothScrollTo(offsetPosition)
-    }
-  }
-
-  const handleHomeClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault()
-    smoothScrollTo(0)
-  }
-
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
