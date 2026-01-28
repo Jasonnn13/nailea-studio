@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: nailsalon
+      MYSQL_DATABASE: nailea
       MYSQL_USER: admin
       MYSQL_PASSWORD: password
     ports:

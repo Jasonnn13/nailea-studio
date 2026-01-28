@@ -1,12 +1,18 @@
 import "dotenv/config";
+import bcrypt from "bcryptjs";
 import { PrismaClient } from "../generated/prisma/client";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 
 const adapter = new PrismaMariaDb(process.env.DATABASE_URL!);
 const prisma = new PrismaClient({ adapter });
 
+// Hash password helper
+async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, 12);
+}
+
 async function main() {
-  console.log("🌱 Mulai seeding database...");
+  console.log("Mulai seeding database...");
 
   // Hapus data lama (urutan penting karena foreign key)
   await prisma.detailTransaksiJasa.deleteMany();
@@ -18,7 +24,11 @@ async function main() {
   await prisma.customer.deleteMany();
   await prisma.user.deleteMany();
 
-  console.log("✅ Data lama dihapus");
+  console.log("Data lama dihapus");
+
+  // Hash passwords
+  const adminPassword = await hashPassword("Admin123!");
+  const staffPassword = await hashPassword("Staff123!");
 
   // Buat Users
   const users = await Promise.all([
@@ -26,12 +36,20 @@ async function main() {
       data: {
         nama: "Admin Utama",
         email: "admin@nailsalon.com",
-        password: "admin123",
+        password: adminPassword,
         role: "admin",
         aktif: true,
       },
     }),
-    
+    prisma.user.create({
+      data: {
+        nama: "Staff Demo",
+        email: "staff@nailsalon.com",
+        password: staffPassword,
+        role: "staff",
+        aktif: true,
+      },
+    }),
   ]);
   console.log(`${users.length} users dibuat`);
 
