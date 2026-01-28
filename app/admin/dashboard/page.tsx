@@ -139,22 +139,108 @@ export default function AdminDashboard() {
 }
 
 function OverviewTab() {
+  const [recentTransaksi, setRecentTransaksi] = useState<{
+    type: 'jasa' | 'item'
+    uid: string
+    customer: string
+    detail: string
+    total: number
+    status: string
+    tanggal: string
+  }[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchRecentTransactions = async () => {
+      try {
+        const headers = getAuthHeaders()
+        const [jasaRes, itemRes] = await Promise.all([
+          fetch('/api/admin/transaksi-jasa', { headers }),
+          fetch('/api/admin/transaksi-item', { headers })
+        ])
+
+        const combined: typeof recentTransaksi = []
+
+        if (jasaRes.ok) {
+          const jasaData = await jasaRes.json()
+          jasaData.forEach((t: TransaksiJasa) => {
+            combined.push({
+              type: 'jasa',
+              uid: t.uid,
+              customer: t.customer.nama,
+              detail: t.detail.map(d => d.jasa.nama).join(', '),
+              total: Number(t.total),
+              status: t.status,
+              tanggal: t.tanggal
+            })
+          })
+        }
+
+        if (itemRes.ok) {
+          const itemData = await itemRes.json()
+          itemData.forEach((t: TransaksiItem) => {
+            combined.push({
+              type: 'item',
+              uid: t.uid,
+              customer: t.customer.nama,
+              detail: t.detail.map(d => d.item.nama).join(', '),
+              total: Number(t.total),
+              status: t.status,
+              tanggal: t.tanggal
+            })
+          })
+        }
+
+        // Sort by date descending and take top 10
+        combined.sort((a, b) => new Date(b.tanggal).getTime() - new Date(a.tanggal).getTime())
+        setRecentTransaksi(combined.slice(0, 10))
+      } catch (error) {
+        console.error('Failed to fetch recent transactions:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchRecentTransactions()
+  }, [])
+
+  if (loading) {
+    return <div className="flex justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>
+  }
+
   return (
     <Card className="border border-accent/20 bg-card/50 backdrop-blur-sm p-8">
       <h2 className="font-heading text-2xl text-foreground mb-6 tracking-wider">RECENT ACTIVITY</h2>
       <div className="space-y-4">
-        {[1, 2, 3].map((item) => (
-          <div key={item} className="flex items-center justify-between p-4 rounded-lg bg-background/30 border border-accent/10">
-            <div>
-              <p className="font-medium text-foreground">Booking #{1000 + item}</p>
-              <p className="text-sm text-foreground/60">Standard Manicure + Art Design</p>
+        {recentTransaksi.length === 0 ? (
+          <p className="text-foreground/60 text-center py-8">No recent transactions</p>
+        ) : (
+          recentTransaksi.map((t) => (
+            <div key={t.uid} className="flex items-center justify-between p-4 rounded-lg bg-background/30 border border-accent/10">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <p className="font-medium text-foreground">#{t.uid.slice(0, 8)}</p>
+                  <span className={`px-2 py-0.5 rounded-full text-xs ${
+                    t.type === 'jasa' ? 'bg-purple-500/20 text-purple-400' : 'bg-blue-500/20 text-blue-400'
+                  }`}>
+                    {t.type === 'jasa' ? 'Service' : 'Product'}
+                  </span>
+                </div>
+                <p className="text-sm text-foreground/60 truncate">{t.customer} • {t.detail}</p>
+              </div>
+              <div className="text-right ml-4">
+                <p className="font-medium text-primary">Rp {t.total.toLocaleString()}</p>
+                <span className={`text-xs ${
+                  t.status === 'SELESAI' ? 'text-green-400' :
+                  t.status === 'BATAL' ? 'text-red-400' :
+                  'text-yellow-400'
+                }`}>
+                  {t.status}
+                </span>
+              </div>
             </div>
-            <div className="text-right">
-              <p className="font-medium text-primary">Rp 100.000</p>
-              <p className="text-sm text-foreground/60">Completed</p>
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </Card>
   )
