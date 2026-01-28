@@ -9,7 +9,6 @@ const _greatVibes = Great_Vibes({ subsets: ["latin"], weight: '400', variable: '
 export const metadata: Metadata = {
   title: 'Nailea Studio - Premium Nail Art Salon',
   description: 'Elegant nail art and beauty services at Nailea Studio',
-  generator: 'v0.app',
   icons: {
     icon: '/logo.svg',
     apple: '/logo.svg',
