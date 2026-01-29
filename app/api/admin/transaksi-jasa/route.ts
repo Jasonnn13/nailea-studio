@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { customerId, detail, catatan } = body
+    const { customerId, detail, catatan, payment } = body
     
     // Use userId from authenticated user
     const userId = user.userId
@@ -60,6 +60,7 @@ export async function POST(request: NextRequest) {
         userId,
         total,
         catatan,
+        payment: payment || 'CASH',
         status: 'PENDING',
         detail: {
           create: await Promise.all(detail.map(async (d: { jasaId: number; jumlah: number }) => {

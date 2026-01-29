@@ -80,6 +80,7 @@ model TransaksiItem {
   tanggal    DateTime        @default(now())
   total      Decimal         @db.Decimal(10, 2)
   status     StatusTransaksi @default(PENDING)
+  payment    PaymentType     @default(CASH)
   catatan    String?         @db.Text
   createdAt  DateTime        @default(now())
   updatedAt  DateTime        @updatedAt
@@ -101,6 +102,7 @@ model TransaksiJasa {
   tanggal    DateTime        @default(now())
   total      Decimal         @db.Decimal(10, 2)
   status     StatusTransaksi @default(PENDING)
+  payment    PaymentType     @default(CASH)
   catatan    String?         @db.Text
   createdAt  DateTime        @default(now())
   updatedAt  DateTime        @updatedAt
@@ -146,4 +148,10 @@ enum StatusTransaksi {
   PENDING
   SELESAI
   BATAL
+}
+
+enum PaymentType {
+  CASH
+  TRANSFER
+  QRIS
 }

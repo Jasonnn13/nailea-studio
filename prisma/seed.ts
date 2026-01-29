@@ -379,6 +379,7 @@ async function main() {
       tanggal: new Date("2026-01-20"),
       total: 325000,
       status: "SELESAI",
+      payment: "CASH",
       catatan: "Pembelian kutek dan hand cream",
       detail: {
         create: [
@@ -397,6 +398,7 @@ async function main() {
       tanggal: new Date("2026-01-22"),
       total: 185000,
       status: "SELESAI",
+      payment: "TRANSFER",
       catatan: null,
       detail: {
         create: [
@@ -414,6 +416,7 @@ async function main() {
       tanggal: new Date("2026-01-25"),
       total: 110000,
       status: "PENDING",
+      payment: "QRIS",
       catatan: "Menunggu stok cuticle oil",
       detail: {
         create: [
@@ -433,6 +436,7 @@ async function main() {
       tanggal: new Date("2026-01-20"),
       total: 225000,
       status: "SELESAI",
+      payment: "CASH",
       catatan: "Paket manicure + nail art",
       detail: {
         create: [
@@ -450,6 +454,7 @@ async function main() {
       tanggal: new Date("2026-01-21"),
       total: 275000,
       status: "SELESAI",
+      payment: "TRANSFER",
       catatan: null,
       detail: {
         create: [
@@ -467,6 +472,7 @@ async function main() {
       tanggal: new Date("2026-01-24"),
       total: 500000,
       status: "SELESAI",
+      payment: "CASH",
       catatan: "Extension full set + nail art",
       detail: {
         create: [
@@ -484,6 +490,7 @@ async function main() {
       tanggal: new Date("2026-01-27"),
       total: 75000,
       status: "PENDING",
+      payment: "QRIS",
       catatan: "Appointment hari ini jam 14:00",
       detail: {
         create: [
