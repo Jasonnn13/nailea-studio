@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { authFetch } from '@/lib/api'
@@ -54,6 +54,10 @@ export function TransaksiJasaManager() {
   const [cart, setCart] = useState<{ jasaId: number; jumlah: number }[]>([])
   const [showReceipt, setShowReceipt] = useState<TransaksiJasa | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [customerQuery, setCustomerQuery] = useState('')
+  const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(null)
+  const [customerFocused, setCustomerFocused] = useState(false)
+  const blurTimeoutRef = useRef<number | null>(null)
 
   const filteredTransaksi = transaksiList.filter(t =>
     t.customer.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -85,10 +89,13 @@ export function TransaksiJasaManager() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (!selectedCustomerId) {
+      alert('Please select a customer')
+      return
+    }
     const formData = new FormData(e.currentTarget)
-    
     const data = {
-      customerId: parseInt(formData.get('customerId') as string),
+      customerId: selectedCustomerId,
       catatan: formData.get('catatan'),
       payment: formData.get('payment'),
       detail: cart
@@ -182,14 +189,52 @@ export function TransaksiJasaManager() {
           <h3 className="font-heading text-xl text-foreground mb-4">New Transaksi Service</h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
+              <div className="relative">
                 <label className="block text-sm text-foreground/60 mb-2">Customer</label>
-                <select name="customerId" required className="w-full p-3 rounded-md border border-accent/20 bg-background/50 text-foreground">
-                  <option value="">Select Customer</option>
-                  {customerList.map(c => (
-                    <option key={c.id} value={c.id}>{c.nama} - {c.telepon || 'No phone'}</option>
-                  ))}
-                </select>
+                <input
+                  type="text"
+                  value={customerQuery}
+                  onChange={(e) => { setCustomerQuery(e.target.value); setSelectedCustomerId(null) }}
+                  onFocus={() => { setCustomerFocused(true); if (blurTimeoutRef.current) { window.clearTimeout(blurTimeoutRef.current); blurTimeoutRef.current = null } }}
+                  onBlur={() => { blurTimeoutRef.current = window.setTimeout(() => setCustomerFocused(false), 150) }}
+                  placeholder="Search customer by name, phone or uid..."
+                  autoComplete="off"
+                  className="w-full p-3 rounded-md border border-accent/20 bg-background/50 text-foreground"
+                />
+                <input type="hidden" name="customerId" value={selectedCustomerId ?? ''} />
+                {(customerQuery || customerFocused) && selectedCustomerId === null && (
+                  <ul className="absolute z-10 w-full mt-1 max-h-48 overflow-auto bg-card border border-accent/20 rounded-md">
+                    {customerList
+                      .filter(c =>
+                        c.nama.toLowerCase().includes(customerQuery.toLowerCase()) ||
+                        (c.telepon || '').toLowerCase().includes(customerQuery.toLowerCase()) ||
+                        c.uid.toLowerCase().includes(customerQuery.toLowerCase())
+                      )
+                      .slice(0, 10)
+                      .map(c => (
+                        <li
+                          key={c.id}
+                          onMouseDown={(ev) => ev.preventDefault()}
+                          onClick={() => {
+                            setSelectedCustomerId(c.id); setCustomerQuery(c.nama); setCustomerFocused(false)
+                            if (blurTimeoutRef.current) { window.clearTimeout(blurTimeoutRef.current); blurTimeoutRef.current = null }
+                          }}
+                          className="p-2 hover:bg-accent/5 cursor-pointer text-foreground"
+                        >
+                          <div className="font-medium">{c.nama}</div>
+                          <div className="text-sm text-foreground/60">{c.telepon || c.uid}</div>
+                        </li>
+                      ))
+                    }
+                    {customerList.filter(c =>
+                      c.nama.toLowerCase().includes(customerQuery.toLowerCase()) ||
+                      (c.telepon || '').toLowerCase().includes(customerQuery.toLowerCase()) ||
+                      c.uid.toLowerCase().includes(customerQuery.toLowerCase())
+                    ).length === 0 && (
+                      <li className="p-2 text-foreground/60">No customers found</li>
+                    )}
+                  </ul>
+                )}
               </div>
               <div>
                 <label className="block text-sm text-foreground/60 mb-2">Add Service</label>

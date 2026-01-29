@@ -45,17 +45,12 @@ export async function POST(request: NextRequest) {
     // Use userId from authenticated user
     const userId = user.userId
 
-    // Calculate total and update stock
+    // Calculate total (do NOT update stock here). Stock adjustments happen when transaksi is completed.
     let total = 0
     for (const d of detail) {
       const item = await prisma.item.findUnique({ where: { id: d.itemId } })
       if (item) {
         total += Number(item.harga) * d.jumlah
-        // Update stock
-        await prisma.item.update({
-          where: { id: d.itemId },
-          data: { stok: item.stok - d.jumlah }
-        })
       }
     }
 

@@ -55,21 +55,66 @@ export async function PUT(
     const body = await request.json()
     const { status, catatan } = body
 
-    const transaksi = await prisma.transaksiItem.update({
+    // Fetch current transaksi with details and items
+    const current = await prisma.transaksiItem.findUnique({
       where: { uid },
-      data: {
-        status,
-        catatan
-      },
-      include: {
-        customer: true,
-        user: true,
-        detail: {
-          include: {
-            item: true
-          }
+      include: { detail: { include: { item: true } } }
+    })
+
+    if (!current) {
+      return NextResponse.json({ error: 'Transaksi not found' }, { status: 404 })
+    }
+
+    // If moving to SELESAI from a non-SELESAI state, decrement stock
+    if (status === 'SELESAI' && current.status !== 'SELESAI') {
+      // Validate stock availability
+      for (const d of current.detail) {
+        const item = await prisma.item.findUnique({ where: { id: d.itemId } })
+        if (!item) {
+          return NextResponse.json({ error: `Item not found: ${d.itemId}` }, { status: 400 })
+        }
+        if (item.stok < d.jumlah) {
+          return NextResponse.json({ error: `Insufficient stock for item ${item.nama}` }, { status: 400 })
         }
       }
+
+      // Perform stock decrements and update transaksi in a transaction
+      const ops: any[] = []
+      for (const d of current.detail) {
+        ops.push(prisma.item.update({ where: { id: d.itemId }, data: { stok: { decrement: d.jumlah } } }))
+      }
+      ops.push(prisma.transaksiItem.update({
+        where: { uid },
+        data: { status, catatan },
+        include: {
+          customer: true,
+          user: true,
+          detail: { include: { item: true } }
+        }
+      }))
+
+      const results = await prisma.$transaction(ops)
+      const updatedTransaksi = results[results.length - 1]
+      return NextResponse.json(updatedTransaksi)
+    }
+
+    // If moving from SELESAI to another status (e.g., BATAL), restore stock
+    if (current.status === 'SELESAI' && status !== 'SELESAI') {
+      const ops: any[] = []
+      for (const d of current.detail) {
+        ops.push(prisma.item.update({ where: { id: d.itemId }, data: { stok: { increment: d.jumlah } } }))
+      }
+      ops.push(prisma.transaksiItem.update({ where: { uid }, data: { status, catatan }, include: { customer: true, user: true, detail: { include: { item: true } } } }))
+      const results = await prisma.$transaction(ops)
+      const updatedTransaksi = results[results.length - 1]
+      return NextResponse.json(updatedTransaksi)
+    }
+
+    // Default: simple update
+    const transaksi = await prisma.transaksiItem.update({
+      where: { uid },
+      data: { status, catatan },
+      include: { customer: true, user: true, detail: { include: { item: true } } }
     })
 
     return NextResponse.json(transaksi)

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import ConfirmDialog from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { authFetch } from '@/lib/api'
 import { SearchBar } from '@/components/admin/search-bar'
@@ -24,6 +25,8 @@ export function JasaManager() {
   const [showForm, setShowForm] = useState(false)
   const [editingJasa, setEditingJasa] = useState<Jasa | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [confirmTarget, setConfirmTarget] = useState<string | null>(null)
 
   const filteredJasa = jasaList.filter(jasa =>
     jasa.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -80,17 +83,20 @@ export function JasaManager() {
   }
 
   const handleDelete = async (uid: string) => {
-    if (!confirm('Are you sure you want to delete this service?')) return
+    setConfirmTarget(uid)
+    setConfirmOpen(true)
+  }
 
+  const confirmDelete = async () => {
+    if (!confirmTarget) return
     try {
-      const res = await authFetch(`/api/admin/jasa/${uid}`, { 
-        method: 'DELETE'
-      })
-      if (res.ok) {
-        fetchJasa()
-      }
+      const res = await authFetch(`/api/admin/jasa/${confirmTarget}`, { method: 'DELETE' })
+      if (res.ok) fetchJasa()
     } catch (error) {
       console.error('Failed to delete jasa:', error)
+    } finally {
+      setConfirmOpen(false)
+      setConfirmTarget(null)
     }
   }
 
@@ -174,6 +180,15 @@ export function JasaManager() {
           </table>
         </div>
       </Card>
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete Service"
+        description="This will permanently delete the service. Are you sure?"
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        onConfirm={confirmDelete}
+        onClose={() => { setConfirmOpen(false); setConfirmTarget(null) }}
+      />
     </div>
   )
 }

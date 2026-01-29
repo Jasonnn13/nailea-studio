@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import ConfirmDialog from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { authFetch } from '@/lib/api'
 import { SearchBar } from '@/components/admin/search-bar'
@@ -23,6 +24,8 @@ export function CustomerManager() {
   const [showForm, setShowForm] = useState(false)
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [confirmTarget, setConfirmTarget] = useState<string | null>(null)
 
   const filteredCustomers = customerList.filter(customer =>
     customer.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -78,17 +81,20 @@ export function CustomerManager() {
   }
 
   const handleDelete = async (uid: string) => {
-    if (!confirm('Are you sure you want to delete this customer?')) return
+    setConfirmTarget(uid)
+    setConfirmOpen(true)
+  }
 
+  const confirmDelete = async () => {
+    if (!confirmTarget) return
     try {
-      const res = await authFetch(`/api/admin/customer/${uid}`, { 
-        method: 'DELETE'
-      })
-      if (res.ok) {
-        fetchCustomers()
-      }
+      const res = await authFetch(`/api/admin/customer/${confirmTarget}`, { method: 'DELETE' })
+      if (res.ok) fetchCustomers()
     } catch (error) {
       console.error('Failed to delete customer:', error)
+    } finally {
+      setConfirmOpen(false)
+      setConfirmTarget(null)
     }
   }
 
@@ -174,6 +180,15 @@ export function CustomerManager() {
           </table>
         </div>
       </Card>
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete Customer"
+        description="This will permanently delete the customer. Are you sure?"
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        onConfirm={confirmDelete}
+        onClose={() => { setConfirmOpen(false); setConfirmTarget(null) }}
+      />
     </div>
   )
 }

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import ConfirmDialog from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { authFetch } from '@/lib/api'
 import { SearchBar } from '@/components/admin/search-bar'
@@ -26,6 +27,8 @@ export function ItemManager() {
   const [editingItem, setEditingItem] = useState<Item | null>(null)
   const [showBarcode, setShowBarcode] = useState<Item | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [confirmTarget, setConfirmTarget] = useState<string | null>(null)
 
   const filteredItems = itemList.filter(item =>
     item.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -82,17 +85,20 @@ export function ItemManager() {
   }
 
   const handleDelete = async (uid: string) => {
-    if (!confirm('Are you sure you want to delete this item?')) return
+    setConfirmTarget(uid)
+    setConfirmOpen(true)
+  }
 
+  const confirmDelete = async () => {
+    if (!confirmTarget) return
     try {
-      const res = await authFetch(`/api/admin/item/${uid}`, { 
-        method: 'DELETE'
-      })
-      if (res.ok) {
-        fetchItems()
-      }
+      const res = await authFetch(`/api/admin/item/${confirmTarget}`, { method: 'DELETE' })
+      if (res.ok) fetchItems()
     } catch (error) {
       console.error('Failed to delete item:', error)
+    } finally {
+      setConfirmOpen(false)
+      setConfirmTarget(null)
     }
   }
 
@@ -192,6 +198,15 @@ export function ItemManager() {
           </table>
         </div>
       </Card>
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete Product"
+        description="This will permanently delete the product. Are you sure?"
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        onConfirm={confirmDelete}
+        onClose={() => { setConfirmOpen(false); setConfirmTarget(null) }}
+      />
     </div>
   )
 }
