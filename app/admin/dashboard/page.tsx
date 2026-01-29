@@ -10,12 +10,27 @@ import QRCode from 'qrcode'
 import Barcode from 'react-barcode'
 
 // Helper to get auth headers for API calls
-const getAuthHeaders = () => {
+const getAuthHeaders = (): HeadersInit => {
   const token = localStorage.getItem('authToken')
-  return {
+  const headers: HeadersInit = {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
   }
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`
+  }
+  return headers
+}
+
+// Helper for fetch with credentials (sends httpOnly cookie)
+const authFetch = (url: string, options: RequestInit = {}) => {
+  return fetch(url, {
+    ...options,
+    credentials: 'include', // Include cookies
+    headers: {
+      ...getAuthHeaders(),
+      ...options.headers,
+    },
+  })
 }
 
 type TabType = 'overview' | 'jasa' | 'item' | 'transaksi-jasa' | 'transaksi-item'
@@ -87,7 +102,12 @@ export default function AdminDashboard() {
     }
   }, [router])
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await authFetch('/api/auth/logout', { method: 'POST' })
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
     localStorage.removeItem('authToken')
     router.push('/')
   }
@@ -153,10 +173,9 @@ function OverviewTab() {
   useEffect(() => {
     const fetchRecentTransactions = async () => {
       try {
-        const headers = getAuthHeaders()
         const [jasaRes, itemRes] = await Promise.all([
-          fetch('/api/admin/transaksi-jasa', { headers }),
-          fetch('/api/admin/transaksi-item', { headers })
+          authFetch('/api/admin/transaksi-jasa'),
+          authFetch('/api/admin/transaksi-item')
         ])
 
         const combined: typeof recentTransaksi = []
@@ -254,9 +273,7 @@ function JasaManager() {
 
   const fetchJasa = async () => {
     try {
-      const res = await fetch('/api/admin/jasa', {
-        headers: getAuthHeaders()
-      })
+      const res = await authFetch('/api/admin/jasa')
       if (res.ok) {
         const data = await res.json()
         setJasaList(data)
@@ -285,11 +302,10 @@ function JasaManager() {
     }
 
     try {
-      const res = await fetch(
+      const res = await authFetch(
         editingJasa ? `/api/admin/jasa/${editingJasa.uid}` : '/api/admin/jasa',
         {
           method: editingJasa ? 'PUT' : 'POST',
-          headers: getAuthHeaders(),
           body: JSON.stringify(data)
         }
       )
@@ -308,9 +324,8 @@ function JasaManager() {
     if (!confirm('Are you sure you want to delete this service?')) return
 
     try {
-      const res = await fetch(`/api/admin/jasa/${uid}`, { 
-        method: 'DELETE',
-        headers: getAuthHeaders()
+      const res = await authFetch(`/api/admin/jasa/${uid}`, { 
+        method: 'DELETE'
       })
       if (res.ok) {
         fetchJasa()
@@ -406,9 +421,7 @@ function ItemManager() {
 
   const fetchItems = async () => {
     try {
-      const res = await fetch('/api/admin/item', {
-        headers: getAuthHeaders()
-      })
+      const res = await authFetch('/api/admin/item')
       if (res.ok) {
         const data = await res.json()
         setItemList(data)
@@ -437,11 +450,10 @@ function ItemManager() {
     }
 
     try {
-      const res = await fetch(
+      const res = await authFetch(
         editingItem ? `/api/admin/item/${editingItem.uid}` : '/api/admin/item',
         {
           method: editingItem ? 'PUT' : 'POST',
-          headers: getAuthHeaders(),
           body: JSON.stringify(data)
         }
       )
@@ -460,9 +472,8 @@ function ItemManager() {
     if (!confirm('Are you sure you want to delete this item?')) return
 
     try {
-      const res = await fetch(`/api/admin/item/${uid}`, { 
-        method: 'DELETE',
-        headers: getAuthHeaders()
+      const res = await authFetch(`/api/admin/item/${uid}`, { 
+        method: 'DELETE'
       })
       if (res.ok) {
         fetchItems()
@@ -579,11 +590,10 @@ function TransaksiJasaManager() {
 
   const fetchData = async () => {
     try {
-      const headers = getAuthHeaders()
       const [transRes, jasaRes, custRes] = await Promise.all([
-        fetch('/api/admin/transaksi-jasa', { headers }),
-        fetch('/api/admin/jasa', { headers }),
-        fetch('/api/admin/customer', { headers })
+        authFetch('/api/admin/transaksi-jasa'),
+        authFetch('/api/admin/jasa'),
+        authFetch('/api/admin/customer')
       ])
       
       if (transRes.ok) setTransaksiList(await transRes.json())
@@ -611,9 +621,8 @@ function TransaksiJasaManager() {
     }
 
     try {
-      const res = await fetch('/api/admin/transaksi-jasa', {
+      const res = await authFetch('/api/admin/transaksi-jasa', {
         method: 'POST',
-        headers: getAuthHeaders(),
         body: JSON.stringify(data)
       })
 
@@ -629,9 +638,8 @@ function TransaksiJasaManager() {
 
   const updateStatus = async (uid: string, status: string) => {
     try {
-      const res = await fetch(`/api/admin/transaksi-jasa/${uid}`, {
+      const res = await authFetch(`/api/admin/transaksi-jasa/${uid}`, {
         method: 'PUT',
-        headers: getAuthHeaders(),
         body: JSON.stringify({ status })
       })
       if (res.ok) fetchData()
@@ -952,11 +960,10 @@ function TransaksiItemManager() {
 
   const fetchData = async () => {
     try {
-      const headers = getAuthHeaders()
       const [transRes, itemRes, custRes] = await Promise.all([
-        fetch('/api/admin/transaksi-item', { headers }),
-        fetch('/api/admin/item', { headers }),
-        fetch('/api/admin/customer', { headers })
+        authFetch('/api/admin/transaksi-item'),
+        authFetch('/api/admin/item'),
+        authFetch('/api/admin/customer')
       ])
       
       if (transRes.ok) setTransaksiList(await transRes.json())
@@ -984,9 +991,8 @@ function TransaksiItemManager() {
     }
 
     try {
-      const res = await fetch('/api/admin/transaksi-item', {
+      const res = await authFetch('/api/admin/transaksi-item', {
         method: 'POST',
-        headers: getAuthHeaders(),
         body: JSON.stringify(data)
       })
 
@@ -1002,9 +1008,8 @@ function TransaksiItemManager() {
 
   const updateStatus = async (uid: string, status: string) => {
     try {
-      const res = await fetch(`/api/admin/transaksi-item/${uid}`, {
+      const res = await authFetch(`/api/admin/transaksi-item/${uid}`, {
         method: 'PUT',
-        headers: getAuthHeaders(),
         body: JSON.stringify({ status })
       })
       if (res.ok) fetchData()

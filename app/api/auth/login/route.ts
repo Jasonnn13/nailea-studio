@@ -112,12 +112,24 @@ export async function POST(request: NextRequest) {
       role: user.role,
     })
 
-    // Return sanitized user and token
-    return NextResponse.json({
+    // Create response with sanitized user and token
+    const response = NextResponse.json({
       message: 'Login successful',
       user: sanitizeUser(user),
       token,
     })
+
+    // Set httpOnly cookie for better security (works with middleware)
+    const isProduction = process.env.NODE_ENV === 'production'
+    response.cookies.set('authToken', token, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60, // 7 days
+      path: '/',
+    })
+
+    return response
 
   } catch (error) {
     console.error('Login error:', error)

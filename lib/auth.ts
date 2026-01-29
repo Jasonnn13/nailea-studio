@@ -1,7 +1,15 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-key-change-in-production'
+// Runtime check for JWT_SECRET - will throw on first use if not set
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET
+  if (!secret) {
+    throw new Error('JWT_SECRET environment variable is required')
+  }
+  return secret
+}
+
 const JWT_EXPIRES_IN = '7d'
 
 // Password hashing
@@ -23,12 +31,13 @@ export interface TokenPayload {
 }
 
 export function generateToken(payload: TokenPayload): string {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN })
+  return jwt.sign(payload, getJwtSecret(), { expiresIn: JWT_EXPIRES_IN })
 }
 
 export function verifyToken(token: string): TokenPayload | null {
   try {
-    return jwt.verify(token, JWT_SECRET) as TokenPayload
+    const decoded = jwt.verify(token, getJwtSecret())
+    return decoded as unknown as TokenPayload
   } catch {
     return null
   }
@@ -69,11 +78,34 @@ export function sanitizeUser(user: { id: number; uid: string; nama: string; emai
 }
 
 // Verify auth from request headers (for API routes)
+// Supports both Bearer token and httpOnly cookie
 export function verifyAuthFromRequest(request: Request): TokenPayload | null {
+  // First, try Authorization header
   const authHeader = request.headers.get('Authorization')
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return null
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.slice(7)
+    return verifyToken(token)
   }
-  const token = authHeader.slice(7)
-  return verifyToken(token)
+  
+  // Fallback to cookie
+  const cookieHeader = request.headers.get('cookie')
+  if (cookieHeader) {
+    const cookies = Object.fromEntries(
+      cookieHeader.split('; ').map(c => {
+        const [key, ...val] = c.split('=')
+        return [key, val.join('=')]
+      })
+    )
+    if (cookies.authToken) {
+      return verifyToken(cookies.authToken)
+    }
+  }
+  
+  return null
+}
+
+// Check if user has required role
+export function requireRole(user: TokenPayload | null, allowedRoles: string[]): boolean {
+  if (!user) return false
+  return allowedRoles.includes(user.role)
 }

@@ -20,25 +20,23 @@ export function useAuth(requireAuth = true) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        // Try to get token from localStorage (for backward compatibility)
+        // or rely on httpOnly cookie (handled automatically)
         const token = localStorage.getItem('authToken')
         
-        if (!token) {
-          if (requireAuth) {
-            router.push('/login')
-          }
-          setLoading(false)
-          return
+        // Verify token with server (cookie is sent automatically)
+        const headers: HeadersInit = {}
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`
         }
 
-        // Verify token with server
         const response = await fetch('/api/auth/me', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+          headers,
+          credentials: 'include' // Include cookies
         })
 
         if (!response.ok) {
-          // Token invalid, clear storage and redirect
+          // Token invalid, clear localStorage
           localStorage.removeItem('authToken')
           localStorage.removeItem('user')
           if (requireAuth) {
@@ -63,7 +61,18 @@ export function useAuth(requireAuth = true) {
     checkAuth()
   }, [requireAuth, router])
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      // Call logout API to clear httpOnly cookie
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include'
+      })
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
+    
+    // Clear localStorage
     localStorage.removeItem('authToken')
     localStorage.removeItem('user')
     setUser(null)
