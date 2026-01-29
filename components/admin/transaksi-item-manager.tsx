@@ -151,7 +151,7 @@ export function TransaksiItemManager() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h2 className="font-heading text-2xl text-foreground tracking-wider">Transaksi Item</h2>
+        <h2 className="font-heading text-2xl text-foreground tracking-wider">Transaksi Product</h2>
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <SearchBar
             value={searchQuery}

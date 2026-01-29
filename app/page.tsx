@@ -1,8 +1,5 @@
 'use client'
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
 import { Header } from '@/components/header'
 import { Services } from '@/components/services'
 import { FAQ } from '@/components/faq'

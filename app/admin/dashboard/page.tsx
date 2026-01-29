@@ -55,10 +55,10 @@ export default function AdminDashboard() {
   const tabs: { id: TabType; label: string }[] = [
     { id: 'overview', label: 'Overview' },
     { id: 'transaksi-jasa', label: 'Transaksi Service' },
-    { id: 'transaksi-item', label: 'Transaksi Item' },
+    { id: 'transaksi-item', label: 'Transaksi Product' },
     { id: 'customer', label: 'Customer' },
     { id: 'jasa', label: 'Service' },
-    { id: 'item', label: 'Item' },
+    { id: 'item', label: 'Product' },
   ]
 
   return (
@@ -117,7 +117,7 @@ function OverviewTab() {
   const [allTransaksi, setAllTransaksi] = useState<TransaksiData[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'year'>('month')
-  const [showAmounts, setShowAmounts] = useState(true)
+  const [showAmounts, setShowAmounts] = useState(false)
 
   const formatAmount = (amount: number) => {
     return showAmounts ? `Rp ${amount.toLocaleString()}` : '••••••••'

@@ -103,20 +103,20 @@ export function ItemManager() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h2 className="font-heading text-2xl text-foreground tracking-wider">Manage Items</h2>
+        <h2 className="font-heading text-2xl text-foreground tracking-wider">Manage Products</h2>
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <SearchBar
             value={searchQuery}
             onChange={setSearchQuery}
             placeholder="Search items..."
           />
-          <Button onClick={() => { setShowForm(true); setEditingItem(null) }}>+ Add Item</Button>
+          <Button onClick={() => { setShowForm(true); setEditingItem(null) }}>+ Add Product</Button>
         </div>
       </div>
 
       {showForm && (
         <Card className="border border-accent/20 bg-card/50 backdrop-blur-sm p-6">
-          <h3 className="font-heading text-xl text-foreground mb-4">{editingItem ? 'Edit' : 'Add'} Item</h3>
+          <h3 className="font-heading text-xl text-foreground mb-4">{editingItem ? 'Edit' : 'Add'} Product</h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input name="nama" placeholder="Nama Item" defaultValue={editingItem?.nama} required />
