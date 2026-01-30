@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useAuth } from '@/hooks/useAuth'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import ConfirmDialog from '@/components/ui/confirm-dialog'
@@ -20,6 +21,8 @@ type Jasa = {
 }
 
 export function JasaManager() {
+  const { user } = useAuth(false)
+  const isAdmin = user?.role === 'admin'
   const [jasaList, setJasaList] = useState<Jasa[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
@@ -27,6 +30,7 @@ export function JasaManager() {
   const [searchQuery, setSearchQuery] = useState('')
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [confirmTarget, setConfirmTarget] = useState<string | null>(null)
+  const [confirmAction, setConfirmAction] = useState<'activate' | 'deactivate'>('deactivate')
 
   const filteredJasa = jasaList.filter(jasa =>
     jasa.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -82,18 +86,24 @@ export function JasaManager() {
     }
   }
 
-  const handleDelete = async (uid: string) => {
+  const handleToggle = async (uid: string, action: 'activate' | 'deactivate') => {
     setConfirmTarget(uid)
+    setConfirmAction(action)
     setConfirmOpen(true)
   }
 
-  const confirmDelete = async () => {
+  const confirmToggle = async () => {
     if (!confirmTarget) return
     try {
-      const res = await authFetch(`/api/admin/jasa/${confirmTarget}`, { method: 'DELETE' })
+      const aktif = confirmAction === 'activate'
+      const res = await authFetch(`/api/admin/jasa/${confirmTarget}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ aktif })
+      })
       if (res.ok) fetchJasa()
     } catch (error) {
-      console.error('Failed to delete jasa:', error)
+      console.error('Failed to update jasa aktif:', error)
     } finally {
       setConfirmOpen(false)
       setConfirmTarget(null)
@@ -114,7 +124,9 @@ export function JasaManager() {
             onChange={setSearchQuery}
             placeholder="Search services..."
           />
-          <Button onClick={() => { setShowForm(true); setEditingJasa(null) }}>+ Add Service</Button>
+          {isAdmin && (
+            <Button onClick={() => { setShowForm(true); setEditingJasa(null) }}>+ Add Service</Button>
+          )}
         </div>
       </div>
 
@@ -153,7 +165,9 @@ export function JasaManager() {
                 <th className="text-left py-3 px-4 text-foreground/60 font-medium">Harga</th>
                 <th className="text-left py-3 px-4 text-foreground/60 font-medium">Durasi</th>
                 <th className="text-left py-3 px-4 text-foreground/60 font-medium">Status</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Actions</th>
+                {isAdmin && (
+                  <th className="text-left py-3 px-4 text-foreground/60 font-medium">Actions</th>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -168,12 +182,16 @@ export function JasaManager() {
                       {jasa.aktif ? 'Active' : 'Inactive'}
                     </span>
                   </td>
-                  <td className="py-3 px-4">
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline" onClick={() => { setEditingJasa(jasa); setShowForm(true) }}>Edit</Button>
-                      <Button size="sm" variant="outline" onClick={() => handleDelete(jasa.uid)}>Delete</Button>
-                    </div>
-                  </td>
+                  {isAdmin && (
+                    <td className="py-3 px-4">
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline" onClick={() => { setEditingJasa(jasa); setShowForm(true) }}>Edit</Button>
+                        <Button size="sm" variant="outline" onClick={() => handleToggle(jasa.uid, jasa.aktif ? 'deactivate' : 'activate')}>
+                          {jasa.aktif ? 'Deactivate' : 'Activate'}
+                        </Button>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -182,11 +200,13 @@ export function JasaManager() {
       </Card>
       <ConfirmDialog
         open={confirmOpen}
-        title="Delete Service"
-        description="This will permanently delete the service. Are you sure?"
-        confirmLabel="Delete"
+        title={confirmAction === 'activate' ? 'Activate Service' : 'Deactivate Service'}
+        description={confirmAction === 'activate'
+          ? 'This will activate the service. Proceed?'
+          : 'This will deactivate the service but keep historical transactions. Proceed?'}
+        confirmLabel={confirmAction === 'activate' ? 'Activate' : 'Deactivate'}
         cancelLabel="Cancel"
-        onConfirm={confirmDelete}
+        onConfirm={confirmToggle}
         onClose={() => { setConfirmOpen(false); setConfirmTarget(null) }}
       />
     </div>

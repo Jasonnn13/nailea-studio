@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import { NextResponse } from 'next/server'
 
 // Runtime check for JWT_SECRET - will throw on first use if not set
 function getJwtSecret(): string {
@@ -108,4 +109,17 @@ export function verifyAuthFromRequest(request: Request): TokenPayload | null {
 export function requireRole(user: TokenPayload | null, allowedRoles: string[]): boolean {
   if (!user) return false
   return allowedRoles.includes(user.role)
+}
+
+// Require that the request comes from an authenticated admin user.
+// Returns a NextResponse (401/403) on failure, or the TokenPayload on success.
+export function requireAdminFromRequest(request: Request): TokenPayload | NextResponse {
+  const user = verifyAuthFromRequest(request)
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+  if (user.role !== 'admin') {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+  return user
 }

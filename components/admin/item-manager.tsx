@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useAuth } from '@/hooks/useAuth'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import ConfirmDialog from '@/components/ui/confirm-dialog'
@@ -21,14 +22,18 @@ type Item = {
 }
 
 export function ItemManager() {
+  const { user } = useAuth(false)
+  const isAdmin = user?.role === 'admin'
   const [itemList, setItemList] = useState<Item[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editingItem, setEditingItem] = useState<Item | null>(null)
   const [showBarcode, setShowBarcode] = useState<Item | null>(null)
+  const [barcodeProps, setBarcodeProps] = useState<{ width: number; height: number; fontSize: number }>({ width: 2, height: 80, fontSize: 12 })
   const [searchQuery, setSearchQuery] = useState('')
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [confirmTarget, setConfirmTarget] = useState<string | null>(null)
+  const [confirmAction, setConfirmAction] = useState<'activate' | 'deactivate'>('deactivate')
 
   const filteredItems = itemList.filter(item =>
     item.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -51,6 +56,27 @@ export function ItemManager() {
 
   useEffect(() => {
     fetchItems()
+  }, [])
+
+  useEffect(() => {
+    const updateBarcodeProps = () => {
+      const w = window.innerWidth
+      if (w < 420) {
+        // very small phones
+        setBarcodeProps({ width: 0.6, height: 40, fontSize: 8 })
+      } else if (w < 480) {
+        // small phones
+        setBarcodeProps({ width: 0.8, height: 48, fontSize: 9 })
+      } else if (w < 640) {
+        // larger phones / small tablets
+        setBarcodeProps({ width: 1.2, height: 64, fontSize: 10 })
+      } else {
+        setBarcodeProps({ width: 1.6, height: 72, fontSize: 11 })
+      }
+    }
+    updateBarcodeProps()
+    window.addEventListener('resize', updateBarcodeProps)
+    return () => window.removeEventListener('resize', updateBarcodeProps)
   }, [])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -84,18 +110,24 @@ export function ItemManager() {
     }
   }
 
-  const handleDelete = async (uid: string) => {
+  const handleToggle = async (uid: string, action: 'activate' | 'deactivate') => {
     setConfirmTarget(uid)
+    setConfirmAction(action)
     setConfirmOpen(true)
   }
 
-  const confirmDelete = async () => {
+  const confirmToggle = async () => {
     if (!confirmTarget) return
     try {
-      const res = await authFetch(`/api/admin/item/${confirmTarget}`, { method: 'DELETE' })
+      const aktif = confirmAction === 'activate'
+      const res = await authFetch(`/api/admin/item/${confirmTarget}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ aktif })
+      })
       if (res.ok) fetchItems()
     } catch (error) {
-      console.error('Failed to delete item:', error)
+      console.error('Failed to update item aktif:', error)
     } finally {
       setConfirmOpen(false)
       setConfirmTarget(null)
@@ -116,7 +148,9 @@ export function ItemManager() {
             onChange={setSearchQuery}
             placeholder="Search items..."
           />
-          <Button onClick={() => { setShowForm(true); setEditingItem(null) }}>+ Add Product</Button>
+          {isAdmin && (
+            <Button onClick={() => { setShowForm(true); setEditingItem(null) }}>+ Add Product</Button>
+          )}
         </div>
       </div>
 
@@ -147,12 +181,12 @@ export function ItemManager() {
 
       {showBarcode && (
         <Card className="border border-accent/20 bg-card/50 backdrop-blur-sm p-6">
-          <div className="flex justify-between items-start">
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
             <div>
               <h3 className="font-heading text-xl text-foreground mb-2">Barcode: {showBarcode.nama}</h3>
               <p className="text-foreground/60 mb-4">Item UID: {showBarcode.uid}</p>
-              <div className="bg-white p-4 rounded-lg inline-block">
-                <Barcode value={showBarcode.uid} width={2} height={80} fontSize={12} />
+                <div className="bg-white p-4 rounded-lg inline-block">
+                <Barcode value={showBarcode.uid} width={barcodeProps.width} height={barcodeProps.height} fontSize={barcodeProps.fontSize} />
               </div>
             </div>
             <Button variant="outline" onClick={() => setShowBarcode(null)}>Close</Button>
@@ -188,8 +222,14 @@ export function ItemManager() {
                   <td className="py-3 px-4">
                     <div className="flex gap-2">
                       <Button size="sm" variant="outline" onClick={() => setShowBarcode(item)}>Barcode</Button>
-                      <Button size="sm" variant="outline" onClick={() => { setEditingItem(item); setShowForm(true) }}>Edit</Button>
-                      <Button size="sm" variant="outline" onClick={() => handleDelete(item.uid)}>Delete</Button>
+                      {isAdmin && (
+                        <>
+                          <Button size="sm" variant="outline" onClick={() => { setEditingItem(item); setShowForm(true) }}>Edit</Button>
+                          <Button size="sm" variant="outline" onClick={() => handleToggle(item.uid, item.aktif ? 'deactivate' : 'activate')}>
+                            {item.aktif ? 'Deactivate' : 'Activate'}
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -200,11 +240,13 @@ export function ItemManager() {
       </Card>
       <ConfirmDialog
         open={confirmOpen}
-        title="Delete Product"
-        description="This will permanently delete the product. Are you sure?"
-        confirmLabel="Delete"
+        title={confirmAction === 'activate' ? 'Activate Product' : 'Deactivate Product'}
+        description={confirmAction === 'activate'
+          ? 'This will activate the product. Proceed?'
+          : 'This will deactivate the product but keep historical transactions. Proceed?'}
+        confirmLabel={confirmAction === 'activate' ? 'Activate' : 'Deactivate'}
         cancelLabel="Cancel"
-        onConfirm={confirmDelete}
+        onConfirm={confirmToggle}
         onClose={() => { setConfirmOpen(false); setConfirmTarget(null) }}
       />
     </div>

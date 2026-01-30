@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyAuthFromRequest } from '@/lib/auth'
+import { verifyAuthFromRequest, requireAdminFromRequest } from '@/lib/auth'
 
 export const runtime = 'nodejs'
 
@@ -10,6 +10,8 @@ export async function GET(request: NextRequest) {
   if (!user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
+
+  // allow any authenticated user to list customers; creation is restricted in POST
 
   try {
     const customers = await prisma.customer.findMany({
@@ -24,10 +26,9 @@ export async function GET(request: NextRequest) {
 
 // POST create new customer
 export async function POST(request: NextRequest) {
-  const user = verifyAuthFromRequest(request)
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const maybe = requireAdminFromRequest(request)
+  if (maybe instanceof NextResponse) return maybe
+  const user = maybe
 
   try {
     const body = await request.json()

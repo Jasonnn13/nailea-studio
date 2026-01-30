@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyAuthFromRequest } from '@/lib/auth'
+import { verifyAuthFromRequest, requireAdminFromRequest } from '@/lib/auth'
 
 export const runtime = 'nodejs'
 
@@ -36,10 +36,9 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ uid: string }> }
 ) {
-  const user = verifyAuthFromRequest(request)
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const maybe = requireAdminFromRequest(request)
+  if (maybe instanceof NextResponse) return maybe
+  const user = maybe
 
   try {
     const { uid } = await params
@@ -70,10 +69,9 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ uid: string }> }
 ) {
-  const user = verifyAuthFromRequest(request)
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const maybe = requireAdminFromRequest(request)
+  if (maybe instanceof NextResponse) return maybe
+  const user = maybe
 
   try {
     const { uid } = await params
@@ -85,5 +83,39 @@ export async function DELETE(
   } catch (error) {
     console.error('Failed to delete jasa:', error)
     return NextResponse.json({ error: 'Failed to delete jasa' }, { status: 500 })
+  }
+}
+
+// PATCH partial update (e.g., deactivate)
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ uid: string }> }
+) {
+  const maybe = requireAdminFromRequest(request)
+  if (maybe instanceof NextResponse) return maybe
+  const user = maybe
+
+  try {
+    const { uid } = await params
+    const body = await request.json()
+    const { nama, deskripsi, harga, durasi, kategori, aktif } = body
+
+    const data: any = {}
+    if (nama !== undefined) data.nama = nama
+    if (deskripsi !== undefined) data.deskripsi = deskripsi
+    if (harga !== undefined) data.harga = Number(harga)
+    if (durasi !== undefined) data.durasi = durasi ? parseInt(durasi) : null
+    if (kategori !== undefined) data.kategori = kategori
+    if (aktif !== undefined) data.aktif = Boolean(aktif)
+
+    const jasa = await prisma.jasa.update({
+      where: { uid },
+      data
+    })
+
+    return NextResponse.json(jasa)
+  } catch (error) {
+    console.error('Failed to patch jasa:', error)
+    return NextResponse.json({ error: 'Failed to patch jasa' }, { status: 500 })
   }
 }

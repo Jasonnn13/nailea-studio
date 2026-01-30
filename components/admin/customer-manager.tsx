@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useAuth } from '@/hooks/useAuth'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import ConfirmDialog from '@/components/ui/confirm-dialog'
@@ -19,6 +20,8 @@ type Customer = {
 }
 
 export function CustomerManager() {
+  const { user } = useAuth(false)
+  const isAdmin = user?.role === 'admin'
   const [customerList, setCustomerList] = useState<Customer[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
@@ -150,7 +153,9 @@ export function CustomerManager() {
                 <th className="text-left py-3 px-4 text-foreground/60 font-medium">Telepon</th>
                 <th className="text-left py-3 px-4 text-foreground/60 font-medium">Tanggal Lahir</th>
                 <th className="text-left py-3 px-4 text-foreground/60 font-medium">Member Since</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Actions</th>
+                {isAdmin && (
+                  <th className="text-left py-3 px-4 text-foreground/60 font-medium">Actions</th>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -168,12 +173,14 @@ export function CustomerManager() {
                   <td className="py-3 px-4 text-foreground/60 text-sm">
                     {new Date(customer.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
                   </td>
-                  <td className="py-3 px-4">
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline" onClick={() => { setEditingCustomer(customer); setShowForm(true) }}>Edit</Button>
-                      <Button size="sm" variant="outline" onClick={() => handleDelete(customer.uid)}>Delete</Button>
-                    </div>
-                  </td>
+                  {isAdmin && (
+                    <td className="py-3 px-4">
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline" onClick={() => { setEditingCustomer(customer); setShowForm(true) }}>Edit</Button>
+                        <Button size="sm" variant="outline" onClick={() => handleDelete(customer.uid)}>Delete</Button>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
