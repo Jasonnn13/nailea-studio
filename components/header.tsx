@@ -1,12 +1,14 @@
 'use client'
 
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '../components/ui/button'
 import { handleSmoothScroll, handleHomeClick } from '@/lib/smooth-scroll'
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const pathname = usePathname()
 
   const handleMobileNavClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId?: string) => {
     setMobileMenuOpen(false)
@@ -120,15 +122,17 @@ export function Header() {
           >
             Contacts
           </a>
-          <div className="pt-4 border-t border-accent/20">
-            <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-              <Button 
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-md"
-              >
-                Login
-              </Button>
-            </Link>
-          </div>
+          {pathname !== '/' && (
+            <div className="pt-4 border-t border-accent/20">
+              <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                <Button 
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-md"
+                >
+                  Login
+                </Button>
+              </Link>
+            </div>
+          )}
         </nav>
       </div>
     </header>
