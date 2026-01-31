@@ -111,19 +111,19 @@ export default function LoginPage() {
             </form>
 
             {/* Divider */}
-            <div className="my-6 flex items-center gap-4">
+            {/* <div className="my-6 flex items-center gap-4">
               <div className="flex-1 h-px bg-accent/20"></div>
               <span className="text-xs text-foreground/50">OR</span>
               <div className="flex-1 h-px bg-accent/20"></div>
-            </div>
+            </div> */}
 
-            {/* Register link */}
+            {/* Register link
             <p className="text-center text-sm text-foreground/60">
               Don't have an account?{' '}
               <Link href="/register" className="text-primary hover:text-primary/80 font-medium">
                 Register here
               </Link>
-            </p>
+            </p> */}
           </div>
         </Card>
 

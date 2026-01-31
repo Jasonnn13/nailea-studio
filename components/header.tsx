@@ -58,7 +58,7 @@ export function Header() {
               href="#contact"
               onClick={(e) => handleSmoothScroll(e, '#contact')}
               className="text-sm text-muted-foreground hover:text-primary transition-colors relative group cursor-pointer"
-            >
+            > 
               Contacts
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
             </a>
@@ -66,14 +66,14 @@ export function Header() {
 
           {/* Desktop CTA Button */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link href="/login">
+            {/* <Link href="/login">
               <Button 
                 size="sm" 
                 className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 rounded-md"
               >
                 Login
               </Button>
-            </Link>
+            </Link> */}
           </div>
 
           {/* Mobile Menu Button */}
