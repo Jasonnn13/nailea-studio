@@ -67,7 +67,7 @@ export function validatePassword(password: string): { valid: boolean; message?: 
 }
 
 // Sanitize user object (remove password before sending to client)
-export function sanitizeUser(user: { id: number; uid: string; nama: string; email: string; role: string; aktif: boolean }) {
+export function sanitizeUser(user: { id: number; uid: string; nama: string; email: string; role: string; aktif: boolean; createdAt?: Date | string } ) {
   return {
     id: user.id,
     uid: user.uid,
@@ -75,8 +75,10 @@ export function sanitizeUser(user: { id: number; uid: string; nama: string; emai
     email: user.email,
     role: user.role,
     aktif: user.aktif,
+    createdAt: user.createdAt ? new Date(user.createdAt).toISOString() : undefined,
   }
 }
+
 
 // Verify auth from request headers (for API routes)
 // Supports both Bearer token and httpOnly cookie

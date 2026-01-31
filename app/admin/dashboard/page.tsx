@@ -7,11 +7,12 @@ import { AdminHeader } from '@/components/admin/header'
 import { JasaManager } from '@/components/admin/jasa-manager'
 import { ItemManager } from '@/components/admin/item-manager'
 import { CustomerManager } from '@/components/admin/customer-manager'
+import { StaffManager } from '@/components/admin/staff-manager'
 import { TransaksiJasaManager } from '@/components/admin/transaksi-jasa-manager'
 import { TransaksiItemManager } from '@/components/admin/transaksi-item-manager'
 import { authFetch } from '@/lib/api'
 
-type TabType = 'overview' | 'jasa' | 'item' | 'customer' | 'transaksi-jasa' | 'transaksi-item'
+type TabType = 'overview' | 'jasa' | 'item' | 'customer' | 'staff' | 'transaksi-jasa' | 'transaksi-item'
 
 type TransaksiJasa = {
   uid: string
@@ -59,6 +60,7 @@ export default function AdminDashboard() {
     { id: 'customer', label: 'Customer' },
     { id: 'jasa', label: 'Service' },
     { id: 'item', label: 'Product' },
+    { id: 'staff', label: 'Staff' },
   ]
 
   return (
@@ -92,6 +94,7 @@ export default function AdminDashboard() {
           {activeTab === 'transaksi-jasa' && <TransaksiJasaManager />}
           {activeTab === 'transaksi-item' && <TransaksiItemManager />}
           {activeTab === 'customer' && <CustomerManager />}
+          {activeTab === 'staff' && <StaffManager />}
           {activeTab === 'jasa' && <JasaManager />}
           {activeTab === 'item' && <ItemManager />}
         </div>
