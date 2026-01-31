@@ -55,8 +55,8 @@ export default function AdminDashboard() {
 
   const tabs: { id: TabType; label: string }[] = [
     { id: 'overview', label: 'Overview' },
-    { id: 'transaksi-jasa', label: 'Transaksi Service' },
-    { id: 'transaksi-item', label: 'Transaksi Product' },
+    { id: 'transaksi-jasa', label: 'Service Transaction' },
+    { id: 'transaksi-item', label: 'Product Transaction' },
     { id: 'customer', label: 'Customer' },
     { id: 'jasa', label: 'Service' },
     { id: 'item', label: 'Product' },
