@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Dropdown } from '@/components/ui/dropdown'
 import { authFetch } from '@/lib/api'
 import { Receipt } from '@/components/admin/receipt'
 import { SearchBar } from '@/components/admin/search-bar'
@@ -57,6 +58,8 @@ export function TransaksiJasaManager() {
   const [customerQuery, setCustomerQuery] = useState('')
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(null)
   const [customerFocused, setCustomerFocused] = useState(false)
+  const [selectedPayment, setSelectedPayment] = useState<string>('CASH')
+  const [selectedService, setSelectedService] = useState<string | number>('')
   const blurTimeoutRef = useRef<number | null>(null)
 
   const filteredTransaksi = transaksiList.filter(t =>
@@ -97,7 +100,7 @@ export function TransaksiJasaManager() {
     const data = {
       customerId: selectedCustomerId,
       catatan: formData.get('catatan'),
-      payment: formData.get('payment'),
+      payment: selectedPayment,
       detail: cart
     }
 
@@ -237,16 +240,23 @@ export function TransaksiJasaManager() {
                 )}
               </div>
               <div>
-                <label className="block text-sm text-foreground/60 mb-2">Add Service</label>
-                <select 
-                  onChange={(e) => { if (e.target.value) addToCart(parseInt(e.target.value)); e.target.value = '' }}
-                  className="w-full p-3 rounded-md border border-accent/20 bg-background/50 text-foreground"
-                >
-                  <option value="">Select Service to Add</option>
-                  {jasaList.filter(j => j.aktif).map(j => (
-                    <option key={j.id} value={j.id}>{j.nama} - Rp {Number(j.harga).toLocaleString()}</option>
-                  ))}
-                </select>
+                <Dropdown
+                  value={selectedService}
+                  onChange={(value) => {
+                    if (value) {
+                      addToCart(parseInt(value as string))
+                      setSelectedService('')
+                    }
+                  }}
+                  label="Add Service"
+                  placeholder="Select Service to Add"
+                  options={jasaList
+                    .filter(j => j.aktif)
+                    .map(j => ({
+                      value: j.id,
+                      label: `${j.nama} - Rp ${Number(j.harga).toLocaleString()}`
+                    }))}
+                />
               </div>
             </div>
 
@@ -273,12 +283,16 @@ export function TransaksiJasaManager() {
             )}
 
             <div>
-              <label className="block text-sm text-foreground/60 mb-2">Payment Method</label>
-              <select name="payment" required className="w-full p-3 rounded-md border border-accent/20 bg-background/50 text-foreground">
-                <option value="CASH">Cash</option>
-                <option value="TRANSFER">Transfer Bank</option>
-                <option value="QRIS">QRIS</option>
-              </select>
+              <Dropdown
+                value={selectedPayment}
+                onChange={(value) => setSelectedPayment(value as string)}
+                label="Payment Method"
+                options={[
+                  { value: 'CASH', label: 'Cash' },
+                  { value: 'TRANSFER', label: 'Transfer Bank' },
+                  { value: 'QRIS', label: 'QRIS' }
+                ]}
+              />
             </div>
 
             <textarea
@@ -313,7 +327,54 @@ export function TransaksiJasaManager() {
         </Card>
       )}
 
-      <Card className="border border-accent/20 bg-card/50 backdrop-blur-sm p-6">
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-3">
+        {filteredTransaksi.map((t) => (
+          <Card key={t.uid} className="border border-accent/20 bg-card/50 backdrop-blur-sm p-4 hover:bg-accent/5 transition-colors">
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex items-start gap-3 flex-1 min-w-0">
+                <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-medium text-foreground font-mono text-sm">#{t.uid.slice(0, 8)}</h3>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                      t.status === 'SELESAI' ? 'bg-green-500/20 text-green-400' :
+                      t.status === 'BATAL' ? 'bg-red-500/20 text-red-400' :
+                      'bg-yellow-500/20 text-yellow-400'
+                    }`}>
+                      {t.status}
+                    </span>
+                  </div>
+                  <p className="text-sm font-medium text-foreground">{t.customer.nama}</p>
+                  <p className="text-xs text-foreground/60 truncate mt-1">{t.detail.map(d => d.jasa.nama).join(', ')}</p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-primary font-medium">Rp {Number(t.total).toLocaleString()}</span>
+                    <span className="text-xs text-foreground/40">
+                      {new Date(t.tanggal).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-2 pt-3 border-t border-accent/10">
+              <Button size="sm" variant="outline" className="flex-1" onClick={() => setShowReceipt(t)}>Receipt</Button>
+              <Button size="sm" variant="outline" className="flex-1" onClick={() => generateQRCode(t)}>QR</Button>
+              {t.status === 'PENDING' && (
+                <>
+                  <Button size="sm" variant="outline" className="flex-1" onClick={() => updateStatus(t.uid, 'SELESAI')}>Complete</Button>
+                </>
+              )}
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      {/* Desktop Table View */}
+      <Card className="hidden md:block border border-accent/20 bg-card/50 backdrop-blur-sm p-6">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>

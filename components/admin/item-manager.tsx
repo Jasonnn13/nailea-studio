@@ -194,7 +194,49 @@ export function ItemManager() {
         </Card>
       )}
 
-      <Card className="border border-accent/20 bg-card/50 backdrop-blur-sm p-6">
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-3">
+        {filteredItems.map((item) => (
+          <Card key={item.uid} className="border border-accent/20 bg-card/50 backdrop-blur-sm p-4 hover:bg-accent/5 transition-colors">
+            <div className="flex items-start justify-between">
+              <div className="flex items-start gap-3 flex-1 min-w-0">
+                <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-medium text-foreground truncate">{item.nama}</h3>
+                  <p className="text-sm text-foreground/60">{item.kategori || 'Uncategorized'}</p>
+                  <div className="flex flex-wrap items-center gap-2 mt-2">
+                    <span className="text-primary font-medium">Rp {Number(item.harga).toLocaleString()}</span>
+                    <span className="text-xs px-2 py-1 rounded-full bg-blue-500/10 text-blue-400">
+                      Stock: {item.stok}
+                    </span>
+                    <span className={`text-xs px-2 py-1 rounded-full ${item.aktif ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                      {item.aktif ? 'Active' : 'Inactive'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-2 mt-3 pt-3 border-t border-accent/10">
+              <Button size="sm" variant="outline" className="flex-1" onClick={() => setShowBarcode(item)}>Barcode</Button>
+              {isAdmin && (
+                <>
+                  <Button size="sm" variant="outline" className="flex-1" onClick={() => { setEditingItem(item); setShowForm(true) }}>Edit</Button>
+                  <Button size="sm" variant="outline" className="flex-1" onClick={() => handleToggle(item.uid, item.aktif ? 'deactivate' : 'activate')}>
+                    {item.aktif ? 'Deactivate' : 'Activate'}
+                  </Button>
+                </>
+              )}
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      {/* Desktop Table View */}
+      <Card className="hidden md:block border border-accent/20 bg-card/50 backdrop-blur-sm p-6">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>

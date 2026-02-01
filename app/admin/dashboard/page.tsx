@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card } from '@/components/ui/card'
+import { Dropdown } from '@/components/ui/dropdown'
 import { AdminHeader } from '@/components/admin/header'
 import { JasaManager } from '@/components/admin/jasa-manager'
 import { ItemManager } from '@/components/admin/item-manager'
@@ -14,11 +15,14 @@ import { authFetch } from '@/lib/api'
 
 type TabType = 'overview' | 'jasa' | 'item' | 'customer' | 'staff' | 'transaksi-jasa' | 'transaksi-item'
 
+type PaymentType = 'CASH' | 'TRANSFER' | 'QRIS'
+
 type TransaksiJasa = {
   uid: string
   tanggal: string
   total: number
   status: string
+  payment: PaymentType
   customer: { nama: string }
   detail: { jasa: { nama: string } }[]
 }
@@ -28,6 +32,7 @@ type TransaksiItem = {
   tanggal: string
   total: number
   status: string
+  payment: PaymentType
   customer: { nama: string }
   detail: { item: { nama: string } }[]
 }
@@ -68,12 +73,26 @@ export default function AdminDashboard() {
       <AdminHeader onLogout={handleLogout} />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-10">
-          <h1 className="font-heading text-4xl text-foreground mb-2 tracking-wider">Dashboard</h1>
-          <p className="text-foreground/60">Manage your studio operations and bookings</p>
+        <div className="mb-6 md:mb-10">
+          <h1 className="font-heading text-3xl md:text-4xl text-foreground mb-2 tracking-wider">Dashboard</h1>
+          <p className="text-foreground/60 text-sm md:text-base">Manage your studio operations and bookings</p>
         </div>
 
-        <div className="flex gap-2 mb-8 border-b border-accent/20 pb-4 overflow-x-auto">
+        {/* Mobile Navigation - Dropdown */}
+        <div className="md:hidden mb-6">
+          <Dropdown
+            value={activeTab}
+            onChange={(value) => setActiveTab(value as TabType)}
+            options={tabs.map(tab => ({
+              value: tab.id,
+              label: tab.label
+            }))}
+            placeholder="Select a section"
+          />
+        </div>
+
+        {/* Desktop Navigation - Tabs */}
+        <div className="hidden md:flex gap-2 mb-8 border-b border-accent/20 pb-4 overflow-x-auto">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -102,8 +121,6 @@ export default function AdminDashboard() {
     </div>
   )
 }
-
-type PaymentType = 'CASH' | 'TRANSFER' | 'QRIS'
 
 type TransaksiData = {
   type: 'jasa' | 'item'
@@ -138,7 +155,8 @@ function OverviewTab() {
 
         if (jasaRes.ok) {
           const jasaData = await jasaRes.json()
-          jasaData.forEach((t: TransaksiJasa & { payment: PaymentType }) => {
+          console.log('Jasa Data:', jasaData)
+          jasaData.forEach((t: TransaksiJasa) => {
             combined.push({
               type: 'jasa',
               uid: t.uid,
@@ -154,7 +172,8 @@ function OverviewTab() {
 
         if (itemRes.ok) {
           const itemData = await itemRes.json()
-          itemData.forEach((t: TransaksiItem & { payment: PaymentType }) => {
+          console.log('Item Data:', itemData)
+          itemData.forEach((t: TransaksiItem) => {
             combined.push({
               type: 'item',
               uid: t.uid,
@@ -169,6 +188,8 @@ function OverviewTab() {
         }
 
         combined.sort((a, b) => new Date(b.tanggal).getTime() - new Date(a.tanggal).getTime())
+        console.log('Combined Data:', combined)
+        console.log('Total transactions:', combined.length)
         setAllTransaksi(combined)
       } catch (error) {
         console.error('Failed to fetch transactions:', error)
@@ -422,16 +443,16 @@ function OverviewTab() {
             <p className="text-foreground/60 text-center py-8">No recent transactions</p>
           ) : (
             allTransaksi.slice(0, 8).map((t) => (
-              <div key={t.uid} className="flex items-center justify-between p-4 rounded-lg bg-background/30 border border-accent/10">
+              <div key={t.uid} className="flex items-start justify-between p-4 rounded-lg bg-background/30 border border-accent/10 gap-4">
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <p className="font-medium text-foreground">#{t.uid.slice(0, 8)}</p>
-                    <span className={`px-2 py-0.5 rounded-full text-xs ${
+                    <span className={`px-2 py-0.5 rounded-full text-xs whitespace-nowrap ${
                       t.type === 'jasa' ? 'bg-purple-500/20 text-purple-400' : 'bg-orange-500/20 text-orange-400'
                     }`}>
                       {t.type === 'jasa' ? 'Service' : 'Product'}
                     </span>
-                    <span className={`px-2 py-0.5 rounded-full text-xs ${
+                    <span className={`px-2 py-0.5 rounded-full text-xs whitespace-nowrap ${
                       t.payment === 'CASH' ? 'bg-emerald-500/20 text-emerald-400' :
                       t.payment === 'TRANSFER' ? 'bg-blue-500/20 text-blue-400' :
                       'bg-violet-500/20 text-violet-400'
@@ -439,11 +460,11 @@ function OverviewTab() {
                       {t.payment}
                     </span>
                   </div>
-                  <p className="text-sm text-foreground/60 truncate">{t.customer} • {t.detail}</p>
-                  <p className="text-xs text-foreground/40">{new Date(t.tanggal).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
+                  <p className="text-sm text-foreground/60 truncate mt-1">{t.customer} • {t.detail}</p>
+                  <p className="text-xs text-foreground/40 mt-1">{new Date(t.tanggal).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
                 </div>
-                <div className="text-right ml-4">
-                  <p className="font-medium text-primary">{formatAmount(t.total)}</p>
+                <div className="text-right flex-shrink-0">
+                  <p className="font-medium text-primary whitespace-nowrap">{formatAmount(t.total)}</p>
                   <span className={`text-xs ${
                     t.status === 'SELESAI' ? 'text-green-400' :
                     t.status === 'BATAL' ? 'text-red-400' :

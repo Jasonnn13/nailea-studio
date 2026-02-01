@@ -142,7 +142,45 @@ export function CustomerManager() {
         </Card>
       )}
 
-      <Card className="border border-accent/20 bg-card/50 backdrop-blur-sm p-6">
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-3">
+        {filteredCustomers.map((customer) => (
+          <Card key={customer.uid} className="border border-accent/20 bg-card/50 backdrop-blur-sm p-4 hover:bg-accent/5 transition-colors">
+            <div className="flex items-start justify-between">
+              <div className="flex items-start gap-3 flex-1 min-w-0">
+                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-medium text-foreground truncate">{customer.nama}</h3>
+                  <p className="text-sm text-foreground/60 truncate">{customer.email || customer.telepon || `ID: ${customer.uid.slice(0, 8)}`}</p>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {customer.tanggalLahir && (
+                      <span className="text-xs px-2 py-1 rounded-full bg-blue-500/10 text-blue-400">
+                        🎂 {new Date(customer.tanggalLahir).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })}
+                      </span>
+                    )}
+                    <span className="text-xs px-2 py-1 rounded-full bg-green-500/10 text-green-400">
+                      Member since {new Date(customer.createdAt).toLocaleDateString('id-ID', { month: 'short', year: 'numeric' })}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {isAdmin && (
+              <div className="flex gap-2 mt-3 pt-3 border-t border-accent/10">
+                <Button size="sm" variant="outline" className="flex-1" onClick={() => { setEditingCustomer(customer); setShowForm(true) }}>Edit</Button>
+                <Button size="sm" variant="outline" className="flex-1" onClick={() => handleDelete(customer.uid)}>Delete</Button>
+              </div>
+            )}
+          </Card>
+        ))}
+      </div>
+
+      {/* Desktop Table View */}
+      <Card className="hidden md:block border border-accent/20 bg-card/50 backdrop-blur-sm p-6">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>

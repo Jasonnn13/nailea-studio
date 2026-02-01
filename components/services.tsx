@@ -91,7 +91,7 @@ export function Services() {
                         </td>
                         <td className="py-4 px-6 text-right">
                           <span className="font-heading font-bold text-primary text-lg">
-                            {item.price.toLocaleString('id-ID')}k
+                            {item.price.toLocaleString('id-ID')}
                           </span>
                         </td>
                       </tr>

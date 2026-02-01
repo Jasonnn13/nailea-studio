@@ -141,7 +141,51 @@ export function StaffManager() {
         </Card>
       )}
 
-      <Card className="border border-accent/20 bg-card/50 backdrop-blur-sm p-6">
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-3">
+        {filteredStaff.map((s) => (
+          <Card key={s.uid} className="border border-accent/20 bg-card/50 backdrop-blur-sm p-4 hover:bg-accent/5 transition-colors">
+            <div className="flex items-start justify-between">
+              <div className="flex items-start gap-3 flex-1 min-w-0">
+                <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-medium text-foreground truncate">{s.nama}</h3>
+                  <p className="text-sm text-foreground/60 truncate">{s.email || `ID: ${s.uid.slice(0, 8)}`}</p>
+                  <div className="flex flex-wrap items-center gap-2 mt-2">
+                    <span className={`text-xs px-2 py-1 rounded-full ${s.role === 'admin' ? 'bg-purple-500/20 text-purple-400' : 'bg-blue-500/10 text-blue-400'}`}>
+                      {s.role}
+                    </span>
+                    <span className={`text-xs px-2 py-1 rounded-full ${s.aktif ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                      {s.aktif ? 'Active' : 'Inactive'}
+                    </span>
+                    {s.createdAt && (() => {
+                      const d = new Date(s.createdAt)
+                      return !isNaN(d.getTime()) && (
+                        <span className="text-xs text-foreground/40">
+                          Since {d.toLocaleDateString('id-ID', { month: 'short', year: 'numeric' })}
+                        </span>
+                      )
+                    })()}
+                  </div>
+                </div>
+              </div>
+            </div>
+            {isAdmin && (
+              <div className="flex gap-2 mt-3 pt-3 border-t border-accent/10">
+                <Button size="sm" variant="outline" className="flex-1" onClick={() => { setEditingStaff(s); setShowForm(true) }}>Edit</Button>
+                <Button size="sm" variant="outline" className="flex-1" onClick={() => handleDelete(s.uid)}>Delete</Button>
+              </div>
+            )}
+          </Card>
+        ))}
+      </div>
+
+      {/* Desktop Table View */}
+      <Card className="hidden md:block border border-accent/20 bg-card/50 backdrop-blur-sm p-6">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
