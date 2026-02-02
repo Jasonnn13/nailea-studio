@@ -29,7 +29,7 @@ export function ItemManager() {
   const [showForm, setShowForm] = useState(false)
   const [editingItem, setEditingItem] = useState<Item | null>(null)
   const [showBarcode, setShowBarcode] = useState<Item | null>(null)
-  const [barcodeProps, setBarcodeProps] = useState<{ width: number; height: number; fontSize: number }>({ width: 2, height: 80, fontSize: 12 })
+  const [barcodeProps, setBarcodeProps] = useState<{ width: number; height: number; fontSize: number }>({ width: 1, height: 56, fontSize: 10 })
   const [searchQuery, setSearchQuery] = useState('')
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [confirmTarget, setConfirmTarget] = useState<string | null>(null)
@@ -63,15 +63,15 @@ export function ItemManager() {
       const w = window.innerWidth
       if (w < 420) {
         // very small phones
-        setBarcodeProps({ width: 0.6, height: 40, fontSize: 8 })
+        setBarcodeProps({ width: 0.5, height: 36, fontSize: 8 })
       } else if (w < 480) {
         // small phones
-        setBarcodeProps({ width: 0.8, height: 48, fontSize: 9 })
+        setBarcodeProps({ width: 0.6, height: 40, fontSize: 9 })
       } else if (w < 640) {
         // larger phones / small tablets
-        setBarcodeProps({ width: 1.2, height: 64, fontSize: 10 })
+        setBarcodeProps({ width: 0.8, height: 48, fontSize: 9 })
       } else {
-        setBarcodeProps({ width: 1.6, height: 72, fontSize: 11 })
+        setBarcodeProps({ width: 1, height: 56, fontSize: 10 })
       }
     }
     updateBarcodeProps()
@@ -155,43 +155,49 @@ export function ItemManager() {
       </div>
 
       {showForm && (
-        <Card className="border border-accent/20 bg-card/50 backdrop-blur-sm p-6">
-          <h3 className="font-heading text-xl text-foreground mb-4">{editingItem ? 'Edit' : 'Add'} Product</h3>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input name="nama" placeholder="Nama Item" defaultValue={editingItem?.nama} required />
-              <Input name="harga" type="number" placeholder="Harga" defaultValue={editingItem?.harga} required />
-              <Input name="stok" type="number" placeholder="Stok" defaultValue={editingItem?.stok || 0} />
-              <Input name="kategori" placeholder="Kategori" defaultValue={editingItem?.kategori || ''} />
-            </div>
-            <textarea
-              name="deskripsi"
-              placeholder="Deskripsi"
-              defaultValue={editingItem?.deskripsi || ''}
-              className="w-full p-3 rounded-md border border-accent/20 bg-background/50 text-foreground"
-              rows={3}
-            />
-            <div className="flex gap-2">
-              <Button type="submit">{editingItem ? 'Update' : 'Create'}</Button>
-              <Button type="button" variant="outline" onClick={() => { setShowForm(false); setEditingItem(null) }}>Cancel</Button>
-            </div>
-          </form>
-        </Card>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="border border-accent/20 bg-card/90 backdrop-blur-sm p-6 w-full max-w-2xl">
+            <h3 className="font-heading text-xl text-foreground mb-4">{editingItem ? 'Edit' : 'Add'} Product</h3>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input name="nama" placeholder="Nama Item" defaultValue={editingItem?.nama} required />
+                <Input name="harga" type="number" placeholder="Harga" defaultValue={editingItem?.harga} required />
+                <Input name="stok" type="number" placeholder="Stok" defaultValue={editingItem?.stok || 0} />
+                <Input name="kategori" placeholder="Kategori" defaultValue={editingItem?.kategori || ''} />
+              </div>
+              <textarea
+                name="deskripsi"
+                placeholder="Deskripsi"
+                defaultValue={editingItem?.deskripsi || ''}
+                className="w-full p-3 rounded-md border border-accent/20 bg-background/50 text-foreground"
+                rows={3}
+              />
+              <div className="flex gap-2">
+                <Button type="submit">{editingItem ? 'Update' : 'Create'}</Button>
+                <Button type="button" variant="outline" onClick={() => { setShowForm(false); setEditingItem(null) }}>Cancel</Button>
+              </div>
+            </form>
+          </Card>
+        </div>
       )}
 
       {showBarcode && (
-        <Card className="border border-accent/20 bg-card/50 backdrop-blur-sm p-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="border border-accent/20 bg-card/90 backdrop-blur-sm p-6 w-full max-w-md">
             <div>
               <h3 className="font-heading text-xl text-foreground mb-2">Barcode: {showBarcode.nama}</h3>
               <p className="text-foreground/60 mb-4">Item UID: {showBarcode.uid}</p>
-                <div className="bg-white p-4 rounded-lg inline-block">
-                <Barcode value={showBarcode.uid} width={barcodeProps.width} height={barcodeProps.height} fontSize={barcodeProps.fontSize} />
+              <div className="bg-white p-4 rounded-lg max-w-full overflow-hidden">
+                <div className="origin-top-left scale-80">
+                  <Barcode value={showBarcode.uid} width={barcodeProps.width} height={barcodeProps.height} fontSize={barcodeProps.fontSize} />
+                </div>
               </div>
             </div>
-            <Button variant="outline" onClick={() => setShowBarcode(null)}>Close</Button>
-          </div>
-        </Card>
+            <div className="mt-6 flex gap-2">
+              <Button className="flex-1" variant="outline" onClick={() => setShowBarcode(null)}>Close</Button>
+            </div>
+          </Card>
+        </div>
       )}
 
       {/* Mobile Card View */}

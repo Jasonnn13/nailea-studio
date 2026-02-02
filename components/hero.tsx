@@ -106,27 +106,23 @@ export function Hero() {
               {
                 title: 'Affordable Price',
                 desc: 'We give you exclusive and luxury design but also an affordable price so every person can afford.',
-                icon: '💰'
               },
               {
                 title: 'Easy Payment',
                 desc: 'We work with many payment methods so you have many payment options.',
-                icon: '💳'
               },
               {
                 title: 'Best Service',
                 desc: 'We never disappoint our customer because we give them our best service.',
-                icon: '⭐'
               },
               {
                 title: 'Great Location',
                 desc: 'Our place is in the middle of city therefore you can reach us easily.',
-                icon: '📍'
               }
             ].map((benefit, index) => (
               <div key={index} className="group">
                 <div className="flex items-start gap-3">
-                  <div className="w-1 h-12 bg-primary rounded-full"></div>
+                  <div className="w-[2px] h-26 bg-primary rounded-full"></div>
                   <div>
                     <h3 className="font-heading text-lg text-foreground mb-3 group-hover:text-primary transition-colors">
                       {benefit.title}

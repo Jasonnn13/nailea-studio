@@ -131,28 +131,30 @@ export function JasaManager() {
       </div>
 
       {showForm && (
-        <Card className="border border-accent/20 bg-card/50 backdrop-blur-sm p-6">
-          <h3 className="font-heading text-xl text-foreground mb-4">{editingJasa ? 'Edit' : 'Add'} Service</h3>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input name="nama" placeholder="Nama Jasa" defaultValue={editingJasa?.nama} required />
-              <Input name="harga" type="number" placeholder="Harga" defaultValue={editingJasa?.harga} required />
-              <Input name="durasi" type="number" placeholder="Durasi (menit)" defaultValue={editingJasa?.durasi || ''} />
-              <Input name="kategori" placeholder="Kategori" defaultValue={editingJasa?.kategori || ''} />
-            </div>
-            <textarea
-              name="deskripsi"
-              placeholder="Deskripsi"
-              defaultValue={editingJasa?.deskripsi || ''}
-              className="w-full p-3 rounded-md border border-accent/20 bg-background/50 text-foreground"
-              rows={3}
-            />
-            <div className="flex gap-2">
-              <Button type="submit">{editingJasa ? 'Update' : 'Create'}</Button>
-              <Button type="button" variant="outline" onClick={() => { setShowForm(false); setEditingJasa(null) }}>Cancel</Button>
-            </div>
-          </form>
-        </Card>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="border border-accent/20 bg-card/90 backdrop-blur-sm p-6 w-full max-w-2xl">
+            <h3 className="font-heading text-xl text-foreground mb-4">{editingJasa ? 'Edit' : 'Add'} Service</h3>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input name="nama" placeholder="Nama Jasa" defaultValue={editingJasa?.nama} required />
+                <Input name="harga" type="number" placeholder="Harga" defaultValue={editingJasa?.harga} required />
+                <Input name="durasi" type="number" placeholder="Durasi (menit)" defaultValue={editingJasa?.durasi || ''} />
+                <Input name="kategori" placeholder="Kategori" defaultValue={editingJasa?.kategori || ''} />
+              </div>
+              <textarea
+                name="deskripsi"
+                placeholder="Deskripsi"
+                defaultValue={editingJasa?.deskripsi || ''}
+                className="w-full p-3 rounded-md border border-accent/20 bg-background/50 text-foreground"
+                rows={3}
+              />
+              <div className="flex gap-2">
+                <Button type="submit">{editingJasa ? 'Update' : 'Create'}</Button>
+                <Button type="button" variant="outline" onClick={() => { setShowForm(false); setEditingJasa(null) }}>Cancel</Button>
+              </div>
+            </form>
+          </Card>
+        </div>
       )}
 
       {/* Mobile Card View */}

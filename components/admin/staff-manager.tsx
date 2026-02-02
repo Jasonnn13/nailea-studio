@@ -121,24 +121,26 @@ export function StaffManager() {
       </div>
 
       {showForm && (
-        <Card className="border border-accent/20 bg-card/50 backdrop-blur-sm p-6">
-          <h3 className="font-heading text-xl text-foreground mb-4">{editingStaff ? 'Edit' : 'Add'} Staff</h3>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input name="nama" placeholder="Nama Staff" defaultValue={editingStaff?.nama} required />
-              <Input name="email" type="email" placeholder="Email" defaultValue={editingStaff?.email || ''} />
-              <Input name="password" type="password" placeholder="Password (leave blank to keep)" />
-              <label className="flex items-center gap-2">
-                <input name="aktif" type="checkbox" defaultChecked={editingStaff?.aktif ?? true} />
-                <span className="text-sm text-foreground/60">Active</span>
-              </label>
-            </div>
-            <div className="flex gap-2">
-              <Button type="submit">{editingStaff ? 'Update' : 'Create'}</Button>
-              <Button type="button" variant="outline" onClick={() => { setShowForm(false); setEditingStaff(null) }}>Cancel</Button>
-            </div>
-          </form>
-        </Card>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="border border-accent/20 bg-card/90 backdrop-blur-sm p-6 w-full max-w-2xl">
+            <h3 className="font-heading text-xl text-foreground mb-4">{editingStaff ? 'Edit' : 'Add'} Staff</h3>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input name="nama" placeholder="Nama Staff" defaultValue={editingStaff?.nama} required />
+                <Input name="email" type="email" placeholder="Email" defaultValue={editingStaff?.email || ''} />
+                <Input name="password" type="password" placeholder="Password (leave blank to keep)" />
+                <label className="flex items-center gap-2">
+                  <input name="aktif" type="checkbox" defaultChecked={editingStaff?.aktif ?? true} />
+                  <span className="text-sm text-foreground/60">Active</span>
+                </label>
+              </div>
+              <div className="flex gap-2">
+                <Button type="submit">{editingStaff ? 'Update' : 'Create'}</Button>
+                <Button type="button" variant="outline" onClick={() => { setShowForm(false); setEditingStaff(null) }}>Cancel</Button>
+              </div>
+            </form>
+          </Card>
+        </div>
       )}
 
       {/* Mobile Card View */}

@@ -120,26 +120,28 @@ export function CustomerManager() {
       </div>
 
       {showForm && (
-        <Card className="border border-accent/20 bg-card/50 backdrop-blur-sm p-6">
-          <h3 className="font-heading text-xl text-foreground mb-4">{editingCustomer ? 'Edit' : 'Add'} Customer</h3>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input name="nama" placeholder="Nama Customer" defaultValue={editingCustomer?.nama} required />
-              <Input name="email" type="email" placeholder="Email" defaultValue={editingCustomer?.email || ''} />
-              <Input name="telepon" placeholder="Telepon" defaultValue={editingCustomer?.telepon || ''} />
-              <Input 
-                name="tanggalLahir" 
-                type="date" 
-                placeholder="Tanggal Lahir" 
-                defaultValue={editingCustomer?.tanggalLahir ? new Date(editingCustomer.tanggalLahir).toISOString().split('T')[0] : ''} 
-              />
-            </div>
-            <div className="flex gap-2">
-              <Button type="submit">{editingCustomer ? 'Update' : 'Create'}</Button>
-              <Button type="button" variant="outline" onClick={() => { setShowForm(false); setEditingCustomer(null) }}>Cancel</Button>
-            </div>
-          </form>
-        </Card>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="border border-accent/20 bg-card/90 backdrop-blur-sm p-6 w-full max-w-2xl">
+            <h3 className="font-heading text-xl text-foreground mb-4">{editingCustomer ? 'Edit' : 'Add'} Customer</h3>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input name="nama" placeholder="Nama Customer" defaultValue={editingCustomer?.nama} required />
+                <Input name="email" type="email" placeholder="Email" defaultValue={editingCustomer?.email || ''} />
+                <Input name="telepon" placeholder="Telepon" defaultValue={editingCustomer?.telepon || ''} />
+                <Input 
+                  name="tanggalLahir" 
+                  type="date" 
+                  placeholder="Tanggal Lahir" 
+                  defaultValue={editingCustomer?.tanggalLahir ? new Date(editingCustomer.tanggalLahir).toISOString().split('T')[0] : ''} 
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button type="submit">{editingCustomer ? 'Update' : 'Create'}</Button>
+                <Button type="button" variant="outline" onClick={() => { setShowForm(false); setEditingCustomer(null) }}>Cancel</Button>
+              </div>
+            </form>
+          </Card>
+        </div>
       )}
 
       {/* Mobile Card View */}

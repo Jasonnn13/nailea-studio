@@ -23,7 +23,7 @@ export function FAQ() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Centered header */}
         <div className="text-center mb-16">
-          <p className="text-primary font-medium tracking-widest text-sm uppercase mb-4">Got Questions?</p>
+          {/* <p className="text-primary font-medium tracking-widest text-sm uppercase mb-4">Got Questions?</p> */}
           <h2 className="font-heading text-4xl md:text-5xl text-foreground mb-4">
             Frequently Asked
           </h2>

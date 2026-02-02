@@ -310,21 +310,25 @@ export function TransaksiJasaManager() {
       )}
 
       {qrCodeUrl && selectedTransaksi && (
-        <Card className="border border-accent/20 bg-card/50 backdrop-blur-sm p-6">
-          <div className="flex justify-between items-start">
-            <div>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="border border-accent/20 bg-card/90 backdrop-blur-sm p-6 w-full max-w-md">
+            <div className="text-center">
               <h3 className="font-heading text-xl text-foreground mb-2">Transaction QR: #{selectedTransaksi.uid.slice(0, 8)}</h3>
               <p className="text-foreground/60 mb-4">Customer: {selectedTransaksi.customer.nama}</p>
-              <img src={qrCodeUrl} alt="QR Code" className="border rounded-lg" />
-              <div className="mt-4">
+              <div className="flex justify-center">
+                <img src={qrCodeUrl} alt="QR Code" className="border rounded-lg" />
+              </div>
+              <div className="mt-4 flex justify-center">
                 <a href={qrCodeUrl} download={`transaction-${selectedTransaksi.uid}.png`}>
                   <Button variant="outline">Download QR</Button>
                 </a>
               </div>
             </div>
-            <Button variant="outline" onClick={() => { setQrCodeUrl(null); setSelectedTransaksi(null) }}>Close</Button>
-          </div>
-        </Card>
+            <div className="mt-6 flex gap-2">
+              <Button className="flex-1" variant="outline" onClick={() => { setQrCodeUrl(null); setSelectedTransaksi(null) }}>Close</Button>
+            </div>
+          </Card>
+        </div>
       )}
 
       {/* Mobile Card View */}

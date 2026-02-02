@@ -38,7 +38,7 @@ export function Services() {
       {/* Price list section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <p className="text-primary font-medium tracking-wide text-sm uppercase mb-4">Pricing</p>
+          {/* <p className="text-primary font-medium tracking-wide text-sm uppercase mb-4">Pricing</p> */}
           <h2 className="font-heading text-3xl md:text-4xl text-foreground mb-4">
             Save your time by using<br />
             <span className="font-script text-primary text-4xl md:text-5xl">our service</span>
@@ -87,10 +87,10 @@ export function Services() {
                           </div>
                         </td>
                         <td className="py-4 px-6 text-muted-foreground hidden md:table-cell">
-                          {item.duration ? `${item.duration} min` : '-'}
+                          {item.duration ? `${item.duration} minutes` : '-'}
                         </td>
                         <td className="py-4 px-6 text-right">
-                          <span className="font-heading font-bold text-primary text-lg">
+                          <span className="text-foreground font-medium">
                             {item.price.toLocaleString('id-ID')}
                           </span>
                         </td>
