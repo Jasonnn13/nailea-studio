@@ -80,7 +80,7 @@ export function Dropdown({
         </button>
 
         {isOpen && (
-          <ul className="absolute z-10 w-full mt-1 rounded-md bg-card border border-accent/20 shadow-lg overflow-hidden">
+          <ul className="absolute z-50 w-full mt-1 rounded-md bg-card border border-accent/20 shadow-lg overflow-y-auto max-h-48">
             {options.map((opt) => (
               <li key={opt.value}>
                 <button

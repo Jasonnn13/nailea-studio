@@ -125,13 +125,13 @@ export function CustomerManager() {
             <h3 className="font-heading text-xl text-foreground mb-4">{editingCustomer ? 'Edit' : 'Add'} Customer</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input name="nama" placeholder="Nama Customer" defaultValue={editingCustomer?.nama} required />
-                <Input name="email" type="email" placeholder="Email" defaultValue={editingCustomer?.email || ''} />
-                <Input name="telepon" placeholder="Telepon" defaultValue={editingCustomer?.telepon || ''} />
-                <Input 
-                  name="tanggalLahir" 
-                  type="date" 
-                  placeholder="Tanggal Lahir" 
+              <Input name="nama" placeholder="Customer Name" defaultValue={editingCustomer?.nama} required />
+              <Input name="email" type="email" placeholder="Email" defaultValue={editingCustomer?.email || ''} />
+              <Input name="telepon" placeholder="Phone" defaultValue={editingCustomer?.telepon || ''} />
+              <Input 
+                name="tanggalLahir" 
+                type="date" 
+                placeholder="Date of Birth" 
                   defaultValue={editingCustomer?.tanggalLahir ? new Date(editingCustomer.tanggalLahir).toISOString().split('T')[0] : ''} 
                 />
               </div>
@@ -188,10 +188,10 @@ export function CustomerManager() {
             <thead>
               <tr className="border-b border-accent/20">
                 <th className="text-left py-3 px-4 text-foreground/60 font-medium">ID</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Nama</th>
+                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Name</th>
                 <th className="text-left py-3 px-4 text-foreground/60 font-medium">Email</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Telepon</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Tanggal Lahir</th>
+                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Phone</th>
+                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Date of Birth</th>
                 <th className="text-left py-3 px-4 text-foreground/60 font-medium">Member Since</th>
                 {isAdmin && (
                   <th className="text-left py-3 px-4 text-foreground/60 font-medium">Actions</th>

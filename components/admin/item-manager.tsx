@@ -160,10 +160,10 @@ export function ItemManager() {
             <h3 className="font-heading text-xl text-foreground mb-4">{editingItem ? 'Edit' : 'Add'} Product</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input name="nama" placeholder="Nama Item" defaultValue={editingItem?.nama} required />
-                <Input name="harga" type="number" placeholder="Harga" defaultValue={editingItem?.harga} required />
-                <Input name="stok" type="number" placeholder="Stok" defaultValue={editingItem?.stok || 0} />
-                <Input name="kategori" placeholder="Kategori" defaultValue={editingItem?.kategori || ''} />
+              <Input name="nama" placeholder="Product Name" defaultValue={editingItem?.nama} required />
+              <Input name="harga" type="number" placeholder="Price" defaultValue={editingItem?.harga} required />
+              <Input name="stok" type="number" placeholder="Stock" defaultValue={editingItem?.stok || 0} />
+              <Input name="kategori" placeholder="Category" defaultValue={editingItem?.kategori || ''} />
               </div>
               <textarea
                 name="deskripsi"
@@ -247,10 +247,10 @@ export function ItemManager() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-accent/20">
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Nama</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Kategori</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Harga</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Stok</th>
+                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Name</th>
+                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Category</th>
+                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Price</th>
+                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Stock</th>
                 <th className="text-left py-3 px-4 text-foreground/60 font-medium">Status</th>
                 <th className="text-left py-3 px-4 text-foreground/60 font-medium">Actions</th>
               </tr>

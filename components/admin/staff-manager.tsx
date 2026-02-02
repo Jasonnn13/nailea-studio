@@ -126,7 +126,7 @@ export function StaffManager() {
             <h3 className="font-heading text-xl text-foreground mb-4">{editingStaff ? 'Edit' : 'Add'} Staff</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input name="nama" placeholder="Nama Staff" defaultValue={editingStaff?.nama} required />
+              <Input name="nama" placeholder="Staff Name" defaultValue={editingStaff?.nama} required />
                 <Input name="email" type="email" placeholder="Email" defaultValue={editingStaff?.email || ''} />
                 <Input name="password" type="password" placeholder="Password (leave blank to keep)" />
                 <label className="flex items-center gap-2">
@@ -193,7 +193,7 @@ export function StaffManager() {
             <thead>
               <tr className="border-b border-accent/20">
                 <th className="text-left py-3 px-4 text-foreground/60 font-medium">ID</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Nama</th>
+                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Name</th>
                 <th className="text-left py-3 px-4 text-foreground/60 font-medium">Email</th>
                 <th className="text-left py-3 px-4 text-foreground/60 font-medium">Role</th>
                 <th className="text-left py-3 px-4 text-foreground/60 font-medium">Active</th>

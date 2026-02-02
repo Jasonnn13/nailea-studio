@@ -161,7 +161,7 @@ export function TransaksiItemManager() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h2 className="font-heading text-2xl text-foreground tracking-wider">Transaksi Product</h2>
+        <h2 className="font-heading text-2xl text-foreground tracking-wider">Product Transactions</h2>
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <SearchBar
             value={searchQuery}
@@ -174,7 +174,7 @@ export function TransaksiItemManager() {
 
       {showForm && (
         <Card className="border border-accent/20 bg-card/50 backdrop-blur-sm p-6">
-          <h3 className="font-heading text-xl text-foreground mb-4">New Transaksi Item</h3>
+          <h3 className="font-heading text-xl text-foreground mb-4">New Product Transaction</h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="relative">
@@ -313,7 +313,7 @@ export function TransaksiItemManager() {
                       t.status === 'BATAL' ? 'bg-red-500/20 text-red-400' :
                       'bg-yellow-500/20 text-yellow-400'
                     }`}>
-                      {t.status}
+                      {t.status === 'SELESAI' ? 'Completed' : t.status === 'BATAL' ? 'Cancelled' : 'Pending'}
                     </span>
                   </div>
                   <p className="text-sm font-medium text-foreground">{t.customer.nama}</p>
@@ -346,35 +346,35 @@ export function TransaksiItemManager() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-accent/20">
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">ID</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Customer</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Items</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Total</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Status</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Date</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Actions</th>
+                <th className="text-left py-3 px-4 text-foreground/60 font-medium w-20">ID</th>
+                <th className="text-left py-3 px-4 text-foreground/60 font-medium w-32">Customer</th>
+                <th className="text-left py-3 px-4 text-foreground/60 font-medium w-40">Items</th>
+                <th className="text-left py-3 px-4 text-foreground/60 font-medium w-28">Total</th>
+                <th className="text-left py-3 px-4 text-foreground/60 font-medium w-24">Status</th>
+                <th className="text-left py-3 px-4 text-foreground/60 font-medium w-28">Date</th>
+                <th className="text-left py-3 px-4 text-foreground/60 font-medium w-36">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredTransaksi.map((t) => (
                 <tr key={t.uid} className="border-b border-accent/10 hover:bg-accent/5">
-                  <td className="py-3 px-4 text-foreground font-mono text-sm">#{t.uid.slice(0, 8)}</td>
-                  <td className="py-3 px-4 text-foreground">{t.customer.nama}</td>
-                  <td className="py-3 px-4 text-foreground/60 text-sm">
+                  <td className="py-3 px-4 text-foreground font-mono text-sm w-20">#{t.uid.slice(0, 8)}</td>
+                  <td className="py-3 px-4 text-foreground w-32">{t.customer.nama}</td>
+                  <td className="py-3 px-4 text-foreground/60 text-sm truncate max-w-xs w-40">
                     {t.detail.map(d => d.item.nama).join(', ')}
                   </td>
-                  <td className="py-3 px-4 text-primary font-medium">Rp {Number(t.total).toLocaleString()}</td>
-                  <td className="py-3 px-4">
+                  <td className="py-3 px-4 text-primary font-medium w-28">Rp {Number(t.total).toLocaleString()}</td>
+                  <td className="py-3 px-4 w-24">
                     <span className={`px-2 py-1 rounded-full text-xs ${
                       t.status === 'SELESAI' ? 'bg-green-500/20 text-green-400' :
                       t.status === 'BATAL' ? 'bg-red-500/20 text-red-400' :
                       'bg-yellow-500/20 text-yellow-400'
                     }`}>
-                      {t.status}
+                      {t.status === 'SELESAI' ? 'Completed' : t.status === 'BATAL' ? 'Cancelled' : 'Pending'}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-foreground/60 text-sm">{new Date(t.tanggal).toLocaleDateString()}</td>
-                  <td className="py-3 px-4">
+                  <td className="py-3 px-4 text-foreground/60 text-sm w-28">{new Date(t.tanggal).toLocaleDateString()}</td>
+                  <td className="py-3 px-4 w-36">
                     <div className="flex gap-2">
                       <Button size="sm" variant="outline" onClick={() => setShowReceipt(t)}>Receipt</Button>
                       {t.status === 'PENDING' && (

@@ -136,10 +136,10 @@ export function JasaManager() {
             <h3 className="font-heading text-xl text-foreground mb-4">{editingJasa ? 'Edit' : 'Add'} Service</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input name="nama" placeholder="Nama Jasa" defaultValue={editingJasa?.nama} required />
-                <Input name="harga" type="number" placeholder="Harga" defaultValue={editingJasa?.harga} required />
-                <Input name="durasi" type="number" placeholder="Durasi (menit)" defaultValue={editingJasa?.durasi || ''} />
-                <Input name="kategori" placeholder="Kategori" defaultValue={editingJasa?.kategori || ''} />
+              <Input name="nama" placeholder="Service Name" defaultValue={editingJasa?.nama} required />
+              <Input name="harga" type="number" placeholder="Price" defaultValue={editingJasa?.harga} required />
+              <Input name="durasi" type="number" placeholder="Duration (minutes)" defaultValue={editingJasa?.durasi || ''} />
+              <Input name="kategori" placeholder="Category" defaultValue={editingJasa?.kategori || ''} />
               </div>
               <textarea
                 name="deskripsi"
@@ -203,10 +203,10 @@ export function JasaManager() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-accent/20">
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Nama</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Kategori</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Harga</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Durasi</th>
+                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Name</th>
+                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Category</th>
+                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Price</th>
+                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Duration</th>
                 <th className="text-left py-3 px-4 text-foreground/60 font-medium">Status</th>
                 {isAdmin && (
                   <th className="text-left py-3 px-4 text-foreground/60 font-medium">Actions</th>

@@ -89,6 +89,12 @@ export function Receipt({
     }
   }
 
+  const getStatusLabel = (status: string) => {
+    if (status === 'SELESAI') return 'Completed'
+    if (status === 'BATAL') return 'Cancelled'
+    return 'Pending'
+  }
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white max-w-md w-full rounded-lg shadow-2xl">
@@ -120,7 +126,7 @@ export function Receipt({
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Status:</span>
-              <span className={getStatusColor()}>{status}</span>
+              <span className={getStatusColor()}>{getStatusLabel(status)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Pembayaran:</span>
