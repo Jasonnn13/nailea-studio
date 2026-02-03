@@ -8,6 +8,7 @@ import ConfirmDialog from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { authFetch } from '@/lib/api'
 import { SearchBar } from '@/components/admin/search-bar'
+import { useDataCache } from '@/lib/dataCache'
 import Barcode from 'react-barcode'
 
 type Item = {
@@ -23,6 +24,7 @@ type Item = {
 
 export function ItemManager() {
   const { user } = useAuth(false)
+  const { getCachedData, setCachedData, invalidateCache } = useDataCache()
   const isAdmin = user?.role === 'admin'
   const [itemList, setItemList] = useState<Item[]>([])
   const [loading, setLoading] = useState(true)
@@ -42,10 +44,18 @@ export function ItemManager() {
 
   const fetchItems = async () => {
     try {
+      const cached = getCachedData('item')
+      if (cached) {
+        setItemList(cached)
+        setLoading(false)
+        return
+      }
+
       const res = await authFetch('/api/admin/item')
       if (res.ok) {
         const data = await res.json()
         setItemList(data)
+        setCachedData('item', data)
       }
     } catch (error) {
       console.error('Failed to fetch items:', error)
@@ -101,6 +111,7 @@ export function ItemManager() {
       )
 
       if (res.ok) {
+        invalidateCache('item')
         fetchItems()
         setShowForm(false)
         setEditingItem(null)
@@ -125,7 +136,10 @@ export function ItemManager() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ aktif })
       })
-      if (res.ok) fetchItems()
+      if (res.ok) {
+        invalidateCache('item')
+        fetchItems()
+      }
     } catch (error) {
       console.error('Failed to update item aktif:', error)
     } finally {

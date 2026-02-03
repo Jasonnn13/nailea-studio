@@ -7,6 +7,7 @@ import { Dropdown } from '@/components/ui/dropdown'
 import { authFetch } from '@/lib/api'
 import { Receipt } from '@/components/admin/receipt'
 import { SearchBar } from '@/components/admin/search-bar'
+import { useDataCache } from '@/lib/dataCache'
 import QRCode from 'qrcode'
 
 type Jasa = {
@@ -45,6 +46,7 @@ type TransaksiJasa = {
 }
 
 export function TransaksiJasaManager() {
+  const { getCachedData, setCachedData, invalidateCache } = useDataCache()
   const [transaksiList, setTransaksiList] = useState<TransaksiJasa[]>([])
   const [jasaList, setJasaList] = useState<Jasa[]>([])
   const [customerList, setCustomerList] = useState<Customer[]>([])
@@ -70,15 +72,40 @@ export function TransaksiJasaManager() {
 
   const fetchData = async () => {
     try {
+      // Check cache first
+      const cachedTrans = getCachedData('transaksi-jasa')
+      const cachedJasa = getCachedData('jasa')
+      const cachedCustomer = getCachedData('customer')
+
+      if (cachedTrans && cachedJasa && cachedCustomer) {
+        setTransaksiList(cachedTrans)
+        setJasaList(cachedJasa)
+        setCustomerList(cachedCustomer)
+        setLoading(false)
+        return
+      }
+
       const [transRes, jasaRes, custRes] = await Promise.all([
         authFetch('/api/admin/transaksi-jasa'),
         authFetch('/api/admin/jasa'),
         authFetch('/api/admin/customer')
       ])
       
-      if (transRes.ok) setTransaksiList(await transRes.json())
-      if (jasaRes.ok) setJasaList(await jasaRes.json())
-      if (custRes.ok) setCustomerList(await custRes.json())
+      if (transRes.ok) {
+        const transData = await transRes.json()
+        setTransaksiList(transData)
+        setCachedData('transaksi-jasa', transData)
+      }
+      if (jasaRes.ok) {
+        const jasaData = await jasaRes.json()
+        setJasaList(jasaData)
+        setCachedData('jasa', jasaData)
+      }
+      if (custRes.ok) {
+        const custData = await custRes.json()
+        setCustomerList(custData)
+        setCachedData('customer', custData)
+      }
     } catch (error) {
       console.error('Failed to fetch data:', error)
     } finally {
@@ -111,6 +138,7 @@ export function TransaksiJasaManager() {
       })
 
       if (res.ok) {
+        invalidateCache('transaksi-jasa')
         fetchData()
         setShowForm(false)
         setCart([])
@@ -126,7 +154,10 @@ export function TransaksiJasaManager() {
         method: 'PUT',
         body: JSON.stringify({ status })
       })
-      if (res.ok) fetchData()
+      if (res.ok) {
+        invalidateCache('transaksi-jasa')
+        fetchData()
+      }
     } catch (error) {
       console.error('Failed to update status:', error)
     }
@@ -354,12 +385,12 @@ export function TransaksiJasaManager() {
                     </span>
                   </div>
                   <p className="text-sm font-medium text-foreground">{t.customer.nama}</p>
+                  <span className="text-xs text-foreground/40">
+                    {new Date(t.tanggal).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })}
+                  </span>
                   <p className="text-xs text-foreground/60 truncate mt-1">{t.detail.map(d => d.jasa.nama).join(', ')}</p>
                   <div className="flex items-center gap-2 mt-2">
                     <span className="text-primary font-medium">Rp {Number(t.total).toLocaleString()}</span>
-                    <span className="text-xs text-foreground/40">
-                      {new Date(t.tanggal).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })}
-                    </span>
                   </div>
                 </div>
               </div>

@@ -8,6 +8,7 @@ import ConfirmDialog from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { authFetch } from '@/lib/api'
 import { SearchBar } from '@/components/admin/search-bar'
+import { useDataCache } from '@/lib/dataCache'
 
 type Jasa = {
   id: number
@@ -22,6 +23,7 @@ type Jasa = {
 
 export function JasaManager() {
   const { user } = useAuth(false)
+  const { getCachedData, setCachedData, invalidateCache } = useDataCache()
   const isAdmin = user?.role === 'admin'
   const [jasaList, setJasaList] = useState<Jasa[]>([])
   const [loading, setLoading] = useState(true)
@@ -39,10 +41,18 @@ export function JasaManager() {
 
   const fetchJasa = async () => {
     try {
+      const cached = getCachedData('jasa')
+      if (cached) {
+        setJasaList(cached)
+        setLoading(false)
+        return
+      }
+
       const res = await authFetch('/api/admin/jasa')
       if (res.ok) {
         const data = await res.json()
         setJasaList(data)
+        setCachedData('jasa', data)
       }
     } catch (error) {
       console.error('Failed to fetch jasa:', error)
@@ -77,6 +87,7 @@ export function JasaManager() {
       )
 
       if (res.ok) {
+        invalidateCache('jasa')
         fetchJasa()
         setShowForm(false)
         setEditingJasa(null)
@@ -101,7 +112,10 @@ export function JasaManager() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ aktif })
       })
-      if (res.ok) fetchJasa()
+      if (res.ok) {
+        invalidateCache('jasa')
+        fetchJasa()
+      }
     } catch (error) {
       console.error('Failed to update jasa aktif:', error)
     } finally {

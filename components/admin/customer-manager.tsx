@@ -8,6 +8,7 @@ import ConfirmDialog from '@/components/ui/confirm-dialog'
 import { Input } from '@/components/ui/input'
 import { authFetch } from '@/lib/api'
 import { SearchBar } from '@/components/admin/search-bar'
+import { useDataCache } from '@/lib/dataCache'
 
 type Customer = {
   id: number
@@ -21,6 +22,7 @@ type Customer = {
 
 export function CustomerManager() {
   const { user } = useAuth(false)
+  const { getCachedData, setCachedData, invalidateCache } = useDataCache()
   const isAdmin = user?.role === 'admin'
   const [customerList, setCustomerList] = useState<Customer[]>([])
   const [loading, setLoading] = useState(true)
@@ -38,10 +40,18 @@ export function CustomerManager() {
 
   const fetchCustomers = async () => {
     try {
+      const cached = getCachedData('customer')
+      if (cached) {
+        setCustomerList(cached)
+        setLoading(false)
+        return
+      }
+
       const res = await authFetch('/api/admin/customer')
       if (res.ok) {
         const data = await res.json()
         setCustomerList(data)
+        setCachedData('customer', data)
       }
     } catch (error) {
       console.error('Failed to fetch customers:', error)
@@ -74,6 +84,7 @@ export function CustomerManager() {
       )
 
       if (res.ok) {
+        invalidateCache('customer')
         fetchCustomers()
         setShowForm(false)
         setEditingCustomer(null)
@@ -92,7 +103,10 @@ export function CustomerManager() {
     if (!confirmTarget) return
     try {
       const res = await authFetch(`/api/admin/customer/${confirmTarget}`, { method: 'DELETE' })
-      if (res.ok) fetchCustomers()
+      if (res.ok) {
+        invalidateCache('customer')
+        fetchCustomers()
+      }
     } catch (error) {
       console.error('Failed to delete customer:', error)
     } finally {

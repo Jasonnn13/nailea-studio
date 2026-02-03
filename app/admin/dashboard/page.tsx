@@ -12,6 +12,7 @@ import { StaffManager } from '@/components/admin/staff-manager'
 import { TransaksiJasaManager } from '@/components/admin/transaksi-jasa-manager'
 import { TransaksiItemManager } from '@/components/admin/transaksi-item-manager'
 import { authFetch } from '@/lib/api'
+import { DataCacheProvider } from '@/lib/dataCache'
 
 type TabType = 'overview' | 'jasa' | 'item' | 'customer' | 'staff' | 'transaksi-jasa' | 'transaksi-item'
 
@@ -41,6 +42,12 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<TabType>('overview')
   const router = useRouter()
 
+  const handleTabChange = (newTab: TabType) => {
+    if (newTab === activeTab) return
+    
+    setActiveTab(newTab)
+  }
+
   useEffect(() => {
     const token = localStorage.getItem('authToken')
     if (!token) {
@@ -69,10 +76,11 @@ export default function AdminDashboard() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
-      <AdminHeader onLogout={handleLogout} />
+    <DataCacheProvider>
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
+        <AdminHeader onLogout={handleLogout} />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6 md:mb-10">
           <h1 className="font-heading text-3xl md:text-4xl text-foreground mb-2 tracking-wider">Dashboard</h1>
           <p className="text-foreground/60 text-sm md:text-base">Manage your studio operations and bookings</p>
@@ -82,7 +90,7 @@ export default function AdminDashboard() {
         <div className="md:hidden mb-6">
           <Dropdown
             value={activeTab}
-            onChange={(value) => setActiveTab(value as TabType)}
+            onChange={(value) => handleTabChange(value as TabType)}
             options={tabs.map(tab => ({
               value: tab.id,
               label: tab.label
@@ -96,8 +104,8 @@ export default function AdminDashboard() {
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 font-medium text-sm tracking-wide transition-all whitespace-nowrap ${
+              onClick={() => handleTabChange(tab.id)}
+              className={`px-4 py-2 font-medium text-sm tracking-wide whitespace-nowrap ${
                 activeTab === tab.id
                   ? 'text-primary border-b-2 border-primary -mb-4'
                   : 'text-foreground/60 hover:text-foreground'
@@ -108,17 +116,20 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        <div className="animate-in fade-in duration-300">
-          {activeTab === 'overview' && <OverviewTab />}
-          {activeTab === 'transaksi-jasa' && <TransaksiJasaManager />}
-          {activeTab === 'transaksi-item' && <TransaksiItemManager />}
-          {activeTab === 'customer' && <CustomerManager />}
-          {activeTab === 'staff' && <StaffManager />}
-          {activeTab === 'jasa' && <JasaManager />}
-          {activeTab === 'item' && <ItemManager />}
+        <div className="min-h-[60vh]">
+          <div className="transition-opacity duration-200 will-change-opacity" style={{ transform: 'translateZ(0)' }}>
+            {activeTab === 'overview' && <OverviewTab />}
+            {activeTab === 'transaksi-jasa' && <TransaksiJasaManager />}
+            {activeTab === 'transaksi-item' && <TransaksiItemManager />}
+            {activeTab === 'customer' && <CustomerManager />}
+            {activeTab === 'staff' && <StaffManager />}
+            {activeTab === 'jasa' && <JasaManager />}
+            {activeTab === 'item' && <ItemManager />}
+          </div>
         </div>
       </main>
     </div>
+    </DataCacheProvider>
   )
 }
 
@@ -224,9 +235,9 @@ function OverviewTab() {
 
   // Calculate totals
   const totalRevenue = completedTransaksi.reduce((sum, t) => sum + t.total, 0)
-  const totalTransactions = filteredTransaksi.length
-  const serviceTransactions = filteredTransaksi.filter(t => t.type === 'jasa').length
-  const productTransactions = filteredTransaksi.filter(t => t.type === 'item').length
+  const totalTransactions = completedTransaksi.length
+  const serviceTransactions = completedTransaksi.filter(t => t.type === 'jasa').length
+  const productTransactions = completedTransaksi.filter(t => t.type === 'item').length
 
   // Payment breakdown (only completed)
   const paymentBreakdown = {

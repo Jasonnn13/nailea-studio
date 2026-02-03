@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
+import { useDataCache } from '@/lib/dataCache'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import ConfirmDialog from '@/components/ui/confirm-dialog'
@@ -21,6 +22,7 @@ type Staff = {
 
 export function StaffManager() {
   const { user } = useAuth(false)
+  const { getCachedData, setCachedData, invalidateCache } = useDataCache()
   const isAdmin = user?.role === 'admin'
   const [staffList, setStaffList] = useState<Staff[]>([])
   const [loading, setLoading] = useState(true)
@@ -37,11 +39,19 @@ export function StaffManager() {
   )
 
   const fetchStaff = async () => {
+    const cached = getCachedData('staff')
+    if (cached) {
+      setStaffList(cached)
+      setLoading(false)
+      return
+    }
+    
     try {
       const res = await authFetch('/api/admin/staff')
       if (res.ok) {
         const data = await res.json()
         setStaffList(data)
+        setCachedData('staff', data)
       }
     } catch (error) {
       console.error('Failed to fetch staff:', error)
@@ -75,6 +85,7 @@ export function StaffManager() {
       )
 
       if (res.ok) {
+        invalidateCache('staff')
         fetchStaff()
         setShowForm(false)
         setEditingStaff(null)
@@ -93,7 +104,10 @@ export function StaffManager() {
     if (!confirmTarget) return
     try {
       const res = await authFetch(`/api/admin/staff/${confirmTarget}`, { method: 'DELETE' })
-      if (res.ok) fetchStaff()
+      if (res.ok) {
+        invalidateCache('staff')
+        fetchStaff()
+      }
     } catch (error) {
       console.error('Failed to delete staff:', error)
     } finally {
