@@ -1,10 +1,20 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getCachedServices, setCachedServices } from '@/lib/serviceCache'
 
 export const runtime = 'nodejs'
 
 export async function GET() {
   try {
+    // Check cache first
+    const cached = getCachedServices()
+    if (cached) {
+      return NextResponse.json(cached, {
+        headers: { 'X-Cache': 'HIT' }
+      })
+    }
+
+    // Fetch from database
     const services = await prisma.jasa.findMany({
       where: { aktif: true },
       orderBy: [
@@ -37,7 +47,12 @@ export async function GET() {
       return acc
     }, {} as Record<string, Array<{ uid: string; name: string; description: string | null; price: number; duration: number | null }>>)
 
-    return NextResponse.json(grouped)
+    // Cache the result
+    setCachedServices(grouped)
+
+    return NextResponse.json(grouped, {
+      headers: { 'X-Cache': 'MISS' }
+    })
   } catch (error) {
     console.error('Failed to fetch services:', error)
     return NextResponse.json({ error: 'Failed to fetch services' }, { status: 500 })

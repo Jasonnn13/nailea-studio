@@ -149,7 +149,7 @@ export function ItemManager() {
   }
 
   if (loading) {
-    return <div className="flex justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>
+    return <div className="flex justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-2 border-primary/20 border-t-primary"></div></div>
   }
 
   return (
@@ -169,8 +169,8 @@ export function ItemManager() {
       </div>
 
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="border border-accent/20 bg-card/90 backdrop-blur-sm p-6 w-full max-w-2xl">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <Card className="border border-foreground/5 bg-background/80 backdrop-blur-xl p-6 w-full max-w-2xl">
             <h3 className="font-heading text-xl text-foreground mb-4">{editingItem ? 'Edit' : 'Add'} Product</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -183,7 +183,7 @@ export function ItemManager() {
                 name="deskripsi"
                 placeholder="Deskripsi"
                 defaultValue={editingItem?.deskripsi || ''}
-                className="w-full p-3 rounded-md border border-accent/20 bg-background/50 text-foreground"
+                className="w-full p-3 rounded-xl border border-foreground/5 bg-foreground/[0.02] text-foreground"
                 rows={3}
               />
               <div className="flex gap-2">
@@ -196,11 +196,11 @@ export function ItemManager() {
       )}
 
       {showBarcode && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="border border-accent/20 bg-card/90 backdrop-blur-sm p-6 w-full max-w-md">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <Card className="border border-foreground/5 bg-background/80 backdrop-blur-xl p-6 w-full max-w-md">
             <div>
               <h3 className="font-heading text-xl text-foreground mb-2">Barcode: {showBarcode.nama}</h3>
-              <p className="text-foreground/60 mb-4">Item UID: {showBarcode.uid}</p>
+              <p className="text-foreground/40 mb-4">Item UID: {showBarcode.uid}</p>
               <div className="bg-white p-4 rounded-lg max-w-full overflow-hidden">
                 <div className="origin-top-left scale-80">
                   <Barcode value={showBarcode.uid} width={barcodeProps.width} height={barcodeProps.height} fontSize={barcodeProps.fontSize} />
@@ -217,7 +217,7 @@ export function ItemManager() {
       {/* Mobile Card View */}
       <div className="md:hidden space-y-3">
         {filteredItems.map((item) => (
-          <Card key={item.uid} className="border border-accent/20 bg-card/50 backdrop-blur-sm p-4 hover:bg-accent/5 transition-colors">
+          <Card key={item.uid} className="border border-foreground/5 bg-background/40 backdrop-blur-xl p-4 hover:bg-foreground/[0.03] hover:-translate-y-0.5 transition-all duration-300">
             <div className="flex items-start justify-between">
               <div className="flex items-start gap-3 flex-1 min-w-0">
                 <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center flex-shrink-0">
@@ -227,7 +227,7 @@ export function ItemManager() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-medium text-foreground truncate">{item.nama}</h3>
-                  <p className="text-sm text-foreground/60">{item.kategori || 'Uncategorized'}</p>
+                  <p className="text-sm text-foreground/40">{item.kategori || 'Uncategorized'}</p>
                   <div className="flex flex-wrap items-center gap-2 mt-2">
                     <span className="text-primary font-medium">Rp {Number(item.harga).toLocaleString()}</span>
                     <span className="text-xs px-2 py-1 rounded-full bg-blue-500/10 text-blue-400">
@@ -240,7 +240,7 @@ export function ItemManager() {
                 </div>
               </div>
             </div>
-            <div className="flex gap-2 mt-3 pt-3 border-t border-accent/10">
+            <div className="flex gap-2 mt-3 pt-3 border-t border-foreground/5">
               <Button size="sm" variant="outline" className="flex-1" onClick={() => setShowBarcode(item)}>Barcode</Button>
               {isAdmin && (
                 <>
@@ -256,26 +256,26 @@ export function ItemManager() {
       </div>
 
       {/* Desktop Table View */}
-      <Card className="hidden md:block border border-accent/20 bg-card/50 backdrop-blur-sm p-6">
+      <Card className="hidden md:block border border-foreground/5 bg-background/40 backdrop-blur-xl p-6 rounded-2xl">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-accent/20">
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Name</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Category</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Price</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Stock</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Status</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Actions</th>
+              <tr className="border-b border-foreground/5">
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium">Name</th>
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium">Category</th>
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium">Price</th>
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium">Stock</th>
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium">Status</th>
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredItems.map((item) => (
-                <tr key={item.uid} className="border-b border-accent/10 hover:bg-accent/5">
+                <tr key={item.uid} className="border-b border-foreground/5 hover:bg-foreground/[0.03]">
                   <td className="py-3 px-4 text-foreground">{item.nama}</td>
-                  <td className="py-3 px-4 text-foreground/60">{item.kategori || '-'}</td>
+                  <td className="py-3 px-4 text-foreground/40">{item.kategori || '-'}</td>
                   <td className="py-3 px-4 text-primary font-medium">Rp {Number(item.harga).toLocaleString()}</td>
-                  <td className="py-3 px-4 text-foreground/60">{item.stok}</td>
+                  <td className="py-3 px-4 text-foreground/40">{item.stok}</td>
                   <td className="py-3 px-4">
                     <span className={`px-2 py-1 rounded-full text-xs ${item.aktif ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
                       {item.aktif ? 'Active' : 'Inactive'}

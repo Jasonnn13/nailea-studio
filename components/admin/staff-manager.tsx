@@ -117,7 +117,7 @@ export function StaffManager() {
   }
 
   if (loading) {
-    return <div className="flex justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>
+    return <div className="flex justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-2 border-primary/20 border-t-primary"></div></div>
   }
 
   return (
@@ -135,8 +135,8 @@ export function StaffManager() {
       </div>
 
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="border border-accent/20 bg-card/90 backdrop-blur-sm p-6 w-full max-w-2xl">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <Card className="border border-foreground/5 bg-background/80 backdrop-blur-xl p-6 w-full max-w-2xl">
             <h3 className="font-heading text-xl text-foreground mb-4">{editingStaff ? 'Edit' : 'Add'} Staff</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -145,7 +145,7 @@ export function StaffManager() {
                 <Input name="password" type="password" placeholder="Password (leave blank to keep)" />
                 <label className="flex items-center gap-2">
                   <input name="aktif" type="checkbox" defaultChecked={editingStaff?.aktif ?? true} />
-                  <span className="text-sm text-foreground/60">Active</span>
+                  <span className="text-sm text-foreground/40">Active</span>
                 </label>
               </div>
               <div className="flex gap-2">
@@ -160,7 +160,7 @@ export function StaffManager() {
       {/* Mobile Card View */}
       <div className="md:hidden space-y-3">
         {filteredStaff.map((s) => (
-          <Card key={s.uid} className="border border-accent/20 bg-card/50 backdrop-blur-sm p-4 hover:bg-accent/5 transition-colors">
+          <Card key={s.uid} className="border border-foreground/5 bg-background/40 backdrop-blur-xl p-4 hover:bg-foreground/[0.03] hover:-translate-y-0.5 transition-all duration-300">
             <div className="flex items-start justify-between">
               <div className="flex items-start gap-3 flex-1 min-w-0">
                 <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
@@ -170,7 +170,7 @@ export function StaffManager() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-medium text-foreground truncate">{s.nama}</h3>
-                  <p className="text-sm text-foreground/60 truncate">{s.email || `ID: ${s.uid.slice(0, 8)}`}</p>
+                  <p className="text-sm text-foreground/40 truncate">{s.email || `ID: ${s.uid.slice(0, 8)}`}</p>
                   <div className="flex flex-wrap items-center gap-2 mt-2">
                     <span className={`text-xs px-2 py-1 rounded-full ${s.role === 'admin' ? 'bg-purple-500/20 text-purple-400' : 'bg-blue-500/10 text-blue-400'}`}>
                       {s.role}
@@ -191,7 +191,7 @@ export function StaffManager() {
               </div>
             </div>
             {isAdmin && (
-              <div className="flex gap-2 mt-3 pt-3 border-t border-accent/10">
+              <div className="flex gap-2 mt-3 pt-3 border-t border-foreground/5">
                 <Button size="sm" variant="outline" className="flex-1" onClick={() => { setEditingStaff(s); setShowForm(true) }}>Edit</Button>
                 <Button size="sm" variant="outline" className="flex-1" onClick={() => handleDelete(s.uid)}>Delete</Button>
               </div>
@@ -201,31 +201,31 @@ export function StaffManager() {
       </div>
 
       {/* Desktop Table View */}
-      <Card className="hidden md:block border border-accent/20 bg-card/50 backdrop-blur-sm p-6">
+      <Card className="hidden md:block border border-foreground/5 bg-background/40 backdrop-blur-xl p-6 rounded-2xl">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-accent/20">
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">ID</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Name</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Email</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Role</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Active</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Since</th>
+              <tr className="border-b border-foreground/5">
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium">ID</th>
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium">Name</th>
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium">Email</th>
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium">Role</th>
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium">Active</th>
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium">Since</th>
                 {isAdmin && (
-                  <th className="text-left py-3 px-4 text-foreground/60 font-medium">Actions</th>
+                  <th className="text-left py-3 px-4 text-foreground/40 font-medium">Actions</th>
                 )}
               </tr>
             </thead>
             <tbody>
               {filteredStaff.map((s) => (
-                <tr key={s.uid} className="border-b border-accent/10 hover:bg-accent/5">
+                <tr key={s.uid} className="border-b border-foreground/5 hover:bg-foreground/[0.03]">
                   <td className="py-3 px-4 text-foreground font-mono text-sm">#{s.uid.slice(0, 8)}</td>
                   <td className="py-3 px-4 text-foreground">{s.nama}</td>
-                  <td className="py-3 px-4 text-foreground/60">{s.email || '-'}</td>
-                  <td className="py-3 px-4 text-foreground/60">{s.role}</td>
-                  <td className="py-3 px-4 text-foreground/60">{s.aktif ? 'Yes' : 'No'}</td>
-                  <td className="py-3 px-4 text-foreground/60 text-sm">{
+                  <td className="py-3 px-4 text-foreground/40">{s.email || '-'}</td>
+                  <td className="py-3 px-4 text-foreground/40">{s.role}</td>
+                  <td className="py-3 px-4 text-foreground/40">{s.aktif ? 'Yes' : 'No'}</td>
+                  <td className="py-3 px-4 text-foreground/40 text-sm">{
                     (() => {
                       const d = s.createdAt ? new Date(s.createdAt) : null
                       return d && !isNaN(d.getTime())

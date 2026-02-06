@@ -72,100 +72,113 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 flex items-center justify-center px-4 py-12">
-      {/* Decorative elements */}
-      <div className="absolute top-20 right-20 w-72 h-72 bg-accent/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-20 left-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl"></div>
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-background via-background to-secondary/15 flex items-center justify-center px-4 py-12">
+      {/* Ambient background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-32 -right-32 w-[450px] h-[450px] rounded-full bg-gradient-to-br from-primary/20 via-accent/10 to-transparent blur-3xl animate-float" />
+        <div className="absolute -bottom-32 -left-32 w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-secondary/30 via-primary/10 to-transparent blur-3xl animate-float-delayed" />
+        <div className="absolute top-1/3 right-1/4 w-[300px] h-[300px] rounded-full bg-gradient-to-tl from-accent/15 to-transparent blur-3xl" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.01)_1px,transparent_1px)] bg-[size:60px_60px]" />
+      </div>
 
       <div className="relative z-10 w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-8">
-          <Link href="/">
-            <div className="font-script text-5xl text-primary mb-2">Nailea</div>
-            <p className="text-xs tracking-widest font-semibold text-foreground">STUDIO</p>
+        <div className="text-center mb-10">
+          <Link href="/" className="inline-block">
+            <div className="relative">
+              <span className="font-script text-5xl text-primary">Nailea</span>
+              <span className="absolute -inset-4 bg-primary/10 blur-2xl rounded-full -z-10" />
+            </div>
+            <p className="text-[10px] tracking-[0.3em] text-muted-foreground mt-1">NAIL STUDIO</p>
           </Link>
         </div>
 
         {/* Card */}
-        <Card className="border border-accent/20 bg-card/50 backdrop-blur-sm">
+        <Card className="border border-foreground/5 bg-background/60 backdrop-blur-xl shadow-xl shadow-foreground/5">
           <div className="p-8">
-            <h1 className="font-heading text-3xl text-foreground text-center mb-2 tracking-wider">CREATE ACCOUNT</h1>
-            <p className="text-center text-sm text-foreground/60 mb-8">Join our team at Nailea Studio</p>
+            <div className="text-center mb-8">
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-medium mb-4">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                Join Our Team
+              </span>
+              <h1 className="font-heading text-2xl text-foreground tracking-wider">Create Account</h1>
+              <p className="text-sm text-muted-foreground mt-1">Become part of Nailea Studio</p>
+            </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {/* First Name */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground tracking-wide">FIRST NAME</label>
-                <Input
-                  type="text"
-                  name="firstName"
-                  placeholder="John"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  className="border-accent/30 bg-background/50 text-foreground placeholder:text-foreground/40"
-                  required
-                />
-              </div>
-
-              {/* Last Name */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground tracking-wide">LAST NAME</label>
-                <Input
-                  type="text"
-                  name="lastName"
-                  placeholder="Doe"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  className="border-accent/30 bg-background/50 text-foreground placeholder:text-foreground/40"
-                  required
-                />
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Name Row */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-muted-foreground tracking-wider uppercase">First Name</label>
+                  <Input
+                    type="text"
+                    name="firstName"
+                    placeholder="John"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    className="border-foreground/10 bg-foreground/[0.03] text-foreground placeholder:text-muted-foreground/50 rounded-xl h-12 focus:border-primary/30 focus:ring-primary/10 transition-all"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-muted-foreground tracking-wider uppercase">Last Name</label>
+                  <Input
+                    type="text"
+                    name="lastName"
+                    placeholder="Doe"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    className="border-foreground/10 bg-foreground/[0.03] text-foreground placeholder:text-muted-foreground/50 rounded-xl h-12 focus:border-primary/30 focus:ring-primary/10 transition-all"
+                    required
+                  />
+                </div>
               </div>
 
               {/* Email */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground tracking-wide">EMAIL</label>
+                <label className="text-xs font-medium text-muted-foreground tracking-wider uppercase">Email</label>
                 <Input
                   type="email"
                   name="email"
                   placeholder="admin@naileastudio.com"
                   value={formData.email}
                   onChange={handleChange}
-                  className="border-accent/30 bg-background/50 text-foreground placeholder:text-foreground/40"
+                  className="border-foreground/10 bg-foreground/[0.03] text-foreground placeholder:text-muted-foreground/50 rounded-xl h-12 focus:border-primary/30 focus:ring-primary/10 transition-all"
                   required
                 />
               </div>
 
               {/* Password */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground tracking-wide">PASSWORD</label>
+                <label className="text-xs font-medium text-muted-foreground tracking-wider uppercase">Password</label>
                 <Input
                   type="password"
                   name="password"
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={handleChange}
-                  className="border-accent/30 bg-background/50 text-foreground placeholder:text-foreground/40"
+                  className="border-foreground/10 bg-foreground/[0.03] text-foreground placeholder:text-muted-foreground/50 rounded-xl h-12 focus:border-primary/30 focus:ring-primary/10 transition-all"
                   required
                 />
               </div>
 
               {/* Confirm Password */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground tracking-wide">CONFIRM PASSWORD</label>
+                <label className="text-xs font-medium text-muted-foreground tracking-wider uppercase">Confirm Password</label>
                 <Input
                   type="password"
                   name="confirmPassword"
                   placeholder="••••••••"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className="border-accent/30 bg-background/50 text-foreground placeholder:text-foreground/40"
+                  className="border-foreground/10 bg-foreground/[0.03] text-foreground placeholder:text-muted-foreground/50 rounded-xl h-12 focus:border-primary/30 focus:ring-primary/10 transition-all"
                   required
                 />
               </div>
 
               {/* Error */}
               {error && (
-                <div className="p-3 bg-red-500/10 border border-red-500/30 rounded text-red-600 text-sm">
+                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-600 text-sm">
                   {error}
                 </div>
               )}
@@ -174,7 +187,7 @@ export default function RegisterPage() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-base font-medium"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-base font-medium rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/25 hover:-translate-y-0.5 transition-all duration-300"
               >
                 {isLoading ? 'Creating account...' : 'Create Account'}
               </Button>
@@ -182,16 +195,16 @@ export default function RegisterPage() {
 
             {/* Divider */}
             <div className="my-6 flex items-center gap-4">
-              <div className="flex-1 h-px bg-accent/20"></div>
-              <span className="text-xs text-foreground/50">OR</span>
-              <div className="flex-1 h-px bg-accent/20"></div>
+              <div className="flex-1 h-px bg-foreground/10" />
+              <span className="text-xs text-muted-foreground/60">OR</span>
+              <div className="flex-1 h-px bg-foreground/10" />
             </div>
 
             {/* Login link */}
-            <p className="text-center text-sm text-foreground/60">
+            <p className="text-center text-sm text-muted-foreground">
               Already have an account?{' '}
               <Link href="/login" className="text-primary hover:text-primary/80 font-medium">
-                Login here
+                Sign in
               </Link>
             </p>
           </div>
@@ -199,8 +212,9 @@ export default function RegisterPage() {
 
         {/* Back to home */}
         <div className="text-center mt-8">
-          <Link href="/" className="text-sm text-foreground/60 hover:text-primary transition-colors">
-            ← Back to Home
+          <Link href="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16l-4-4m0 0l4-4m-4 4h18" /></svg>
+            Back to Home
           </Link>
         </div>
       </div>

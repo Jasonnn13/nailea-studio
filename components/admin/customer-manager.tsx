@@ -116,7 +116,7 @@ export function CustomerManager() {
   }
 
   if (loading) {
-    return <div className="flex justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>
+    return <div className="flex justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-2 border-primary/20 border-t-primary"></div></div>
   }
 
   return (
@@ -134,8 +134,8 @@ export function CustomerManager() {
       </div>
 
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="border border-accent/20 bg-card/90 backdrop-blur-sm p-6 w-full max-w-2xl">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <Card className="border border-foreground/5 bg-background/80 backdrop-blur-xl p-6 w-full max-w-2xl">
             <h3 className="font-heading text-xl text-foreground mb-4">{editingCustomer ? 'Edit' : 'Add'} Customer</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -161,7 +161,7 @@ export function CustomerManager() {
       {/* Mobile Card View */}
       <div className="md:hidden space-y-3">
         {filteredCustomers.map((customer) => (
-          <Card key={customer.uid} className="border border-accent/20 bg-card/50 backdrop-blur-sm p-4 hover:bg-accent/5 transition-colors">
+          <Card key={customer.uid} className="border border-foreground/5 bg-background/40 backdrop-blur-xl p-4 hover:bg-foreground/[0.03] hover:-translate-y-0.5 transition-all duration-300">
             <div className="flex items-start justify-between">
               <div className="flex items-start gap-3 flex-1 min-w-0">
                 <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
@@ -171,7 +171,7 @@ export function CustomerManager() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-medium text-foreground truncate">{customer.nama}</h3>
-                  <p className="text-sm text-foreground/60 truncate">{customer.email || customer.telepon || `ID: ${customer.uid.slice(0, 8)}`}</p>
+                  <p className="text-sm text-foreground/40 truncate">{customer.email || customer.telepon || `ID: ${customer.uid.slice(0, 8)}`}</p>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {customer.tanggalLahir && (
                       <span className="text-xs px-2 py-1 rounded-full bg-blue-500/10 text-blue-400">
@@ -186,7 +186,7 @@ export function CustomerManager() {
               </div>
             </div>
             {isAdmin && (
-              <div className="flex gap-2 mt-3 pt-3 border-t border-accent/10">
+              <div className="flex gap-2 mt-3 pt-3 border-t border-foreground/5">
                 <Button size="sm" variant="outline" className="flex-1" onClick={() => { setEditingCustomer(customer); setShowForm(true) }}>Edit</Button>
                 <Button size="sm" variant="outline" className="flex-1" onClick={() => handleDelete(customer.uid)}>Delete</Button>
               </div>
@@ -196,35 +196,35 @@ export function CustomerManager() {
       </div>
 
       {/* Desktop Table View */}
-      <Card className="hidden md:block border border-accent/20 bg-card/50 backdrop-blur-sm p-6">
+      <Card className="hidden md:block border border-foreground/5 bg-background/40 backdrop-blur-xl p-6 rounded-2xl">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-accent/20">
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">ID</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Name</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Email</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Phone</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Date of Birth</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium">Member Since</th>
+              <tr className="border-b border-foreground/5">
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium">ID</th>
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium">Name</th>
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium">Email</th>
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium">Phone</th>
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium">Date of Birth</th>
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium">Member Since</th>
                 {isAdmin && (
-                  <th className="text-left py-3 px-4 text-foreground/60 font-medium">Actions</th>
+                  <th className="text-left py-3 px-4 text-foreground/40 font-medium">Actions</th>
                 )}
               </tr>
             </thead>
             <tbody>
               {filteredCustomers.map((customer) => (
-                <tr key={customer.uid} className="border-b border-accent/10 hover:bg-accent/5">
+                <tr key={customer.uid} className="border-b border-foreground/5 hover:bg-foreground/[0.03]">
                   <td className="py-3 px-4 text-foreground font-mono text-sm">#{customer.uid.slice(0, 8)}</td>
                   <td className="py-3 px-4 text-foreground">{customer.nama}</td>
-                  <td className="py-3 px-4 text-foreground/60">{customer.email || '-'}</td>
-                  <td className="py-3 px-4 text-foreground/60">{customer.telepon || '-'}</td>
-                  <td className="py-3 px-4 text-foreground/60">
+                  <td className="py-3 px-4 text-foreground/40">{customer.email || '-'}</td>
+                  <td className="py-3 px-4 text-foreground/40">{customer.telepon || '-'}</td>
+                  <td className="py-3 px-4 text-foreground/40">
                     {customer.tanggalLahir 
                       ? new Date(customer.tanggalLahir).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
                       : '-'}
                   </td>
-                  <td className="py-3 px-4 text-foreground/60 text-sm">
+                  <td className="py-3 px-4 text-foreground/40 text-sm">
                     {new Date(customer.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
                   </td>
                   {isAdmin && (

@@ -186,7 +186,7 @@ export function TransaksiItemManager() {
   }
 
   if (loading) {
-    return <div className="flex justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>
+    return <div className="flex justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-2 border-primary/20 border-t-primary"></div></div>
   }
 
   return (
@@ -204,12 +204,12 @@ export function TransaksiItemManager() {
       </div>
 
       {showForm && (
-        <Card className="border border-accent/20 bg-card/50 backdrop-blur-sm p-6">
+        <Card className="border border-foreground/5 bg-background/40 backdrop-blur-xl p-6">
           <h3 className="font-heading text-xl text-foreground mb-4">New Product Transaction</h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="relative">
-                <label className="block text-sm text-foreground/60 mb-2">Customer</label>
+                <label className="block text-sm text-foreground/40 mb-2">Customer</label>
                 <input
                   type="text"
                   value={customerQuery}
@@ -218,11 +218,11 @@ export function TransaksiItemManager() {
                   onBlur={() => { blurTimeoutRef.current = window.setTimeout(() => setCustomerFocused(false), 150) }}
                   placeholder="Search customer by name, phone or uid..."
                   autoComplete="off"
-                  className="w-full p-3 rounded-md border border-accent/20 bg-background/50 text-foreground"
+                  className="w-full p-3 rounded-md border border-foreground/5 bg-foreground/[0.02] text-foreground"
                 />
                 <input type="hidden" name="customerId" value={selectedCustomerId ?? ''} />
                 {(customerQuery || customerFocused) && selectedCustomerId === null && (
-                  <ul className="absolute z-10 w-full mt-1 max-h-48 overflow-auto bg-card border border-accent/20 rounded-md">
+                  <ul className="absolute z-10 w-full mt-1 max-h-48 overflow-auto bg-card border border-foreground/5 rounded-md">
                     {customerList
                       .filter(c =>
                         c.nama.toLowerCase().includes(customerQuery.toLowerCase()) ||
@@ -238,10 +238,10 @@ export function TransaksiItemManager() {
                             setSelectedCustomerId(c.id); setCustomerQuery(c.nama); setCustomerFocused(false)
                             if (blurTimeoutRef.current) { window.clearTimeout(blurTimeoutRef.current); blurTimeoutRef.current = null }
                           }}
-                          className="p-2 hover:bg-accent/5 cursor-pointer text-foreground"
+                          className="p-2 hover:bg-foreground/[0.03] cursor-pointer text-foreground"
                         >
                           <div className="font-medium">{c.nama}</div>
-                          <div className="text-sm text-foreground/60">{c.telepon || c.uid}</div>
+                          <div className="text-sm text-foreground/40">{c.telepon || c.uid}</div>
                         </li>
                       ))
                     }
@@ -250,7 +250,7 @@ export function TransaksiItemManager() {
                       (c.telepon || '').toLowerCase().includes(customerQuery.toLowerCase()) ||
                       c.uid.toLowerCase().includes(customerQuery.toLowerCase())
                     ).length === 0 && (
-                      <li className="p-2 text-foreground/60">No customers found</li>
+                      <li className="p-2 text-foreground/40">No customers found</li>
                     )}
                   </ul>
                 )}
@@ -277,12 +277,12 @@ export function TransaksiItemManager() {
             </div>
 
             {cart.length > 0 && (
-              <div className="bg-background/30 rounded-lg p-4">
+              <div className="bg-foreground/[0.02] rounded-lg p-4">
                 <h4 className="text-foreground font-medium mb-3">Cart Items</h4>
                 {cart.map(cartItem => {
                   const item = itemList.find(i => i.id === cartItem.itemId)
                   return item ? (
-                    <div key={cartItem.itemId} className="flex justify-between items-center py-2 border-b border-accent/10">
+                    <div key={cartItem.itemId} className="flex justify-between items-center py-2 border-b border-foreground/5">
                       <span className="text-foreground">{item.nama} x {cartItem.jumlah}</span>
                       <div className="flex items-center gap-4">
                         <span className="text-primary">Rp {(Number(item.harga) * cartItem.jumlah).toLocaleString()}</span>
@@ -291,7 +291,7 @@ export function TransaksiItemManager() {
                     </div>
                   ) : null
                 })}
-                <div className="flex justify-between mt-4 pt-2 border-t border-accent/20">
+                <div className="flex justify-between mt-4 pt-2 border-t border-foreground/5">
                   <span className="font-medium text-foreground">Total:</span>
                   <span className="font-bold text-primary">Rp {getCartTotal().toLocaleString()}</span>
                 </div>
@@ -314,7 +314,7 @@ export function TransaksiItemManager() {
             <textarea
               name="catatan"
               placeholder="Notes (optional)"
-              className="w-full p-3 rounded-md border border-accent/20 bg-background/50 text-foreground"
+              className="w-full p-3 rounded-xl border border-foreground/5 bg-foreground/[0.02] text-foreground"
               rows={2}
             />
             <div className="flex gap-2">
@@ -328,7 +328,7 @@ export function TransaksiItemManager() {
       {/* Mobile Card View */}
       <div className="md:hidden space-y-3">
         {filteredTransaksi.map((t) => (
-          <Card key={t.uid} className="border border-accent/20 bg-card/50 backdrop-blur-sm p-4 hover:bg-accent/5 transition-colors">
+          <Card key={t.uid} className="border border-foreground/5 bg-background/40 backdrop-blur-xl p-4 hover:bg-foreground/[0.03] hover:-translate-y-0.5 transition-all duration-300">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-start gap-3 flex-1 min-w-0">
                 <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center flex-shrink-0">
@@ -351,7 +351,7 @@ export function TransaksiItemManager() {
                   <span className="text-xs text-foreground/40">
                     {new Date(t.tanggal).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' })}
                   </span>
-                  <p className="text-xs text-foreground/60 truncate mt-1">{t.detail.map(d => d.item.nama).join(', ')}</p>
+                  <p className="text-xs text-foreground/40 truncate mt-1">{t.detail.map(d => d.item.nama).join(', ')}</p>
 
                   <div className="flex items-center gap-2 mt-2">
                     <span className="text-primary font-medium">Rp {Number(t.total).toLocaleString()}</span>
@@ -359,7 +359,7 @@ export function TransaksiItemManager() {
                 </div>
               </div>
             </div>
-            <div className="flex gap-2 pt-3 border-t border-accent/10">
+            <div className="flex gap-2 pt-3 border-t border-foreground/5">
               <Button size="sm" variant="outline" className="flex-1" onClick={() => setShowReceipt(t)}>Receipt</Button>
               {t.status === 'PENDING' && (
                 <>
@@ -373,26 +373,26 @@ export function TransaksiItemManager() {
       </div>
 
       {/* Desktop Table View */}
-      <Card className="hidden md:block border border-accent/20 bg-card/50 backdrop-blur-sm p-6">
+      <Card className="hidden md:block border border-foreground/5 bg-background/40 backdrop-blur-xl p-6 rounded-2xl">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-accent/20">
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium w-20">ID</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium w-32">Customer</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium w-40">Items</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium w-28">Total</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium w-24">Status</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium w-28">Date</th>
-                <th className="text-left py-3 px-4 text-foreground/60 font-medium w-36">Actions</th>
+              <tr className="border-b border-foreground/5">
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium w-20">ID</th>
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium w-32">Customer</th>
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium w-40">Items</th>
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium w-28">Total</th>
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium w-24">Status</th>
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium w-28">Date</th>
+                <th className="text-left py-3 px-4 text-foreground/40 font-medium w-36">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredTransaksi.map((t) => (
-                <tr key={t.uid} className="border-b border-accent/10 hover:bg-accent/5">
+                <tr key={t.uid} className="border-b border-foreground/5 hover:bg-foreground/[0.03]">
                   <td className="py-3 px-4 text-foreground font-mono text-sm w-20">#{t.uid.slice(0, 8)}</td>
                   <td className="py-3 px-4 text-foreground w-32">{t.customer.nama}</td>
-                  <td className="py-3 px-4 text-foreground/60 text-sm truncate max-w-xs w-40">
+                  <td className="py-3 px-4 text-foreground/40 text-sm truncate max-w-xs w-40">
                     {t.detail.map(d => d.item.nama).join(', ')}
                   </td>
                   <td className="py-3 px-4 text-primary font-medium w-28">Rp {Number(t.total).toLocaleString()}</td>
@@ -405,7 +405,7 @@ export function TransaksiItemManager() {
                       {t.status === 'SELESAI' ? 'Completed' : t.status === 'BATAL' ? 'Cancelled' : 'Pending'}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-foreground/60 text-sm w-28">{new Date(t.tanggal).toLocaleDateString()}</td>
+                  <td className="py-3 px-4 text-foreground/40 text-sm w-28">{new Date(t.tanggal).toLocaleDateString()}</td>
                   <td className="py-3 px-4 w-36">
                     <div className="flex gap-2">
                       <Button size="sm" variant="outline" onClick={() => setShowReceipt(t)}>Receipt</Button>

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifyAuthFromRequest, requireAdminFromRequest } from '@/lib/auth'
+import { invalidateServiceCache } from '@/lib/serviceCache'
 
 export const runtime = 'nodejs'
 
@@ -57,6 +58,9 @@ export async function PUT(
       }
     })
 
+    // Invalidate services cache after updating
+    invalidateServiceCache()
+
     return NextResponse.json(jasa)
   } catch (error) {
     console.error('Failed to update jasa:', error)
@@ -78,6 +82,9 @@ export async function DELETE(
     await prisma.jasa.delete({
       where: { uid }
     })
+
+    // Invalidate services cache after deleting
+    invalidateServiceCache()
 
     return NextResponse.json({ message: 'Jasa deleted' })
   } catch (error) {
@@ -112,6 +119,9 @@ export async function PATCH(
       where: { uid },
       data
     })
+
+    // Invalidate services cache after patching
+    invalidateServiceCache()
 
     return NextResponse.json(jasa)
   } catch (error) {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifyAuthFromRequest, requireAdminFromRequest } from '@/lib/auth'
+import { invalidateServiceCache } from '@/lib/serviceCache'
 
 export const runtime = 'nodejs'
 
@@ -44,6 +45,9 @@ export async function POST(request: NextRequest) {
         aktif: true
       }
     })
+
+    // Invalidate services cache after creating
+    invalidateServiceCache()
 
     return NextResponse.json(jasa, { status: 201 })
   } catch (error) {
