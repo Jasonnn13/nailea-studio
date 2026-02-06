@@ -341,7 +341,7 @@ export function TransaksiJasaManager() {
       )}
 
       {qrCodeUrl && selectedTransaksi && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 w-screen h-[100dvh] bg-black/35 backdrop-blur-md flex items-center justify-center z-50 p-4">
           <Card className="border border-foreground/5 bg-background/80 backdrop-blur-xl p-6 w-full max-w-md">
             <div className="text-center">
               <h3 className="font-heading text-xl text-foreground mb-2">Transaction QR: #{selectedTransaksi.uid.slice(0, 8)}</h3>

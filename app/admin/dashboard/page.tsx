@@ -52,13 +52,13 @@ export default function AdminDashboard() {
     // Animate out → swap → animate in
     if (contentRef.current) {
       gsap.to(contentRef.current, {
-        opacity: 0, y: 16, duration: 0.2, ease: 'power2.in',
+        opacity: 0, duration: 0.2, ease: 'power2.in',
         onComplete: () => {
           setActiveTab(newTab)
           if (contentRef.current) {
             gsap.fromTo(contentRef.current,
-              { opacity: 0, y: 16 },
-              { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }
+              { opacity: 0 },
+              { opacity: 1, duration: 0.35, ease: 'power2.out' }
             )
           }
         }
@@ -85,8 +85,8 @@ export default function AdminDashboard() {
       }
       if (contentRef.current) {
         gsap.fromTo(contentRef.current,
-          { opacity: 0, y: 24 },
-          { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out', delay: 0.4 }
+          { opacity: 0 },
+          { opacity: 1, duration: 0.6, ease: 'power3.out', delay: 0.4 }
         )
       }
     })

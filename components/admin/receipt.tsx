@@ -96,7 +96,7 @@ export function Receipt({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 w-screen h-[100dvh] bg-black/35 backdrop-blur-md flex items-center justify-center z-50 p-4">
       <div className="bg-white max-w-md w-full rounded-lg shadow-2xl">
         <div ref={receiptRef} className="p-6 text-black">
           {/* Header */}
