@@ -1,6 +1,6 @@
 'use client'
 
-import React from "react"
+import React, { useRef } from "react"
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -15,17 +15,29 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+  const emailRef = useRef<HTMLInputElement>(null)
+  const passwordRef = useRef<HTMLInputElement>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setIsLoading(true)
 
+    // Get values from refs (handles autocomplete) or state
+    const emailValue = emailRef.current?.value || email
+    const passwordValue = passwordRef.current?.value || password
+
+    if (!emailValue || !passwordValue) {
+      setError('Email and password must be filled')
+      setIsLoading(false)
+      return
+    }
+
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: emailValue, password: passwordValue }),
       })
 
       const data = await response.json()
@@ -84,6 +96,7 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <label className="text-xs font-medium text-muted-foreground tracking-wider uppercase">Email</label>
                 <Input
+                  ref={emailRef}
                   type="email"
                   placeholder="admin@naileastudio.com"
                   value={email}
@@ -97,6 +110,7 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <label className="text-xs font-medium text-muted-foreground tracking-wider uppercase">Password</label>
                 <Input
+                  ref={passwordRef}
                   type="password"
                   placeholder="••••••••"
                   value={password}
