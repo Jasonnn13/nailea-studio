@@ -40,6 +40,9 @@ const nextConfig: NextConfig = {
   
   // Recommended for production
   poweredByHeader: false,
+  
+  // Required for Docker standalone build
+  output: 'standalone',
 };
 
 export default nextConfig;
