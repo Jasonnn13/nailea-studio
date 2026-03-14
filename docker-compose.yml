@@ -32,31 +32,11 @@ services:
       - DATABASE_USER=admin
       - DATABASE_PASSWORD=password
       - DATABASE_NAME=nailea
-      - DATABASE_URL=mysql://admin:password@mysql:3306/nailea
+      - DATABASE_URL=mysql://admin:password@mysql:3306/nailea?allowPublicKeyRetrieval=true
       - JWT_SECRET=nailea-studio-super-secret-key-change-this-in-production-2026
     depends_on:
       mysql:
         condition: service_healthy
-    volumes:
-      - ./prisma:/app/prisma
-
-  prisma-studio:
-    image: node:20-alpine
-    container_name: nail_prisma_studio
-    restart: unless-stopped
-    working_dir: /app
-    ports:
-      - "5555:5555"
-    environment:
-      - DATABASE_URL=mysql://admin:password@mysql:3306/nailea
-      - BROWSER=none
-    depends_on:
-      mysql:
-        condition: service_healthy
-    volumes:
-      - .:/app
-      - /app/node_modules
-    command: sh -c "npm install && npx prisma generate && npx prisma studio --port 5555 --browser none"
 
 volumes:
   mysql_data:
